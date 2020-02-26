@@ -24,10 +24,7 @@
 
 #container {
   padding-bottom: 70px;
-}
-
-#input {
-  margin: 20px 0 15px 5px;
+  padding-top: 35px;
 }
 
 #card-footer {
@@ -45,17 +42,6 @@
 
 #list-view-info {
   float: right;
-}
-
-.user-avatar-list {
-  color: #4da6ff;
-  font-weight: bold;
-  margin-top: 9px;
-}
-
-.user-avatar-detail {
-  color: #4da6ff;
-  font-weight: bold;
 }
 
 #list-view-div {
@@ -98,4 +84,19 @@
   text-align: right;
   margin-right: 20px;
   font-weight: bold;
+}
+
+.add-button {
+  float: right;
+  margin-right: 4px;
+}
+
+.title {
+  padding-bottom: 10px;
+  padding-left: 3px;
+}
+
+.drag-icon {
+  font-weight: 400;
+  color: #007bff;
 }

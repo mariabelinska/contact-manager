@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   ListGroup,
@@ -13,59 +13,86 @@ import {
   NavbarBrand,
   CardFooter,
 } from 'reactstrap';
-import UserAvatar from 'react-user-avatar';
 import './App.css';
+import { fetchData } from './services/fetch-data';
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: null,
-      person: null,
-      modal: false,
+      contactList: null,
+      contact: null,
+      addContactModal: false,
+      deleteContactModal: false,
     };
-
-    this.onDragEnd = this.onDragEnd.bind(this);
-    this.toggle = this.toggle.bind(this);
   }
 
   componentDidMount() {
-    fetch(`http://localhost:5000/Contacts`)
-      .then(response => response.json())
-      .then(items => this.setState({ items: items.data }));
+    this.getContacts();
   }
 
-  toggle(person) {
+  getContacts = async () => {
+    const apiResponse = await fetchData({
+      method: 'get',
+      url: `/Contacts`,
+    });
+
+    this.setState({ contactList: apiResponse.data });
+  };
+
+  deleteContact = async id => {
+    await fetchData({
+      method: 'delete',
+      url: `/Contacts/${id}`,
+      hasNoResponse: true,
+    });
+
+    this.toggleDeleteContact();
+    this.getContacts();
+  };
+
+  toggleAddContact = contact => {
     this.setState(prevState => ({
-      modal: !prevState.modal,
-      person,
+      addContactModal: !prevState.addContactModal,
+      contact,
     }));
-  }
+  };
 
-  reorder(list, startIndex, endIndex) {
+  toggleDeleteContact = contact => {
+    this.setState(prevState => ({
+      deleteContactModal: !prevState.deleteContactModal,
+      contact,
+    }));
+  };
+
+  reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
 
     return result;
-  }
+  };
 
-  onDragEnd(result) {
+  onDragEnd = result => {
     if (!result.destination) {
       return;
     }
 
-    const items = this.reorder(this.state.items, result.source.index, result.destination.index);
+    const contactList = this.reorder(
+      this.state.contactList,
+      result.source.index,
+      result.destination.index,
+    );
 
     this.setState({
-      items: items,
+      contactList: contactList,
     });
-  }
+  };
 
   render() {
-    const { items } = this.state;
+    const { contactList } = this.state;
 
-    if (!items) {
+    if (!contactList) {
       return null;
     }
 
@@ -77,19 +104,20 @@ class App extends Component {
           </NavbarBrand>
         </Navbar>
 
-        <ListGroup id="list-group" flush>
-          <ListGroupItem id="list-group-item" disabled>
-            Kontaktid
-          </ListGroupItem>
-        </ListGroup>
-
         <Container id="container">
+          <Button className="add-button" outline color="primary" onClick={this.toggleAddContact}>
+            Add contact
+          </Button>
+
+          <h3 className="title">Contacts</h3>
+
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId="droppable">
               {provided => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {this.renderModal()}
-                  {this.renderListViewItems(items)}
+                  {this.renderDetailViewModal()}
+                  {this.renderDeleteContactModal()}
+                  {this.renderListViewItems(contactList)}
                   {provided.placeholder}
                 </div>
               )}
@@ -101,10 +129,10 @@ class App extends Component {
     );
   }
 
-  renderListViewItems = items => {
+  renderListViewItems = contactList => {
     return (
       <ListGroup>
-        {items.map((item, index) => (
+        {contactList.map((item, index) => (
           <Draggable key={item.id} draggableId={item.id} index={index}>
             {provided => (
               <div
@@ -113,7 +141,7 @@ class App extends Component {
                 {...provided.dragHandleProps}
               >
                 <div id="draggable">
-                  <ListGroupItem key={item.id} tag="a" onClick={() => this.toggle(item)} action>
+                  <ListGroupItem key={item.id} tag="a" action>
                     {this.renderListViewInfo(item)}
                   </ListGroupItem>
                 </div>
@@ -125,50 +153,71 @@ class App extends Component {
     );
   };
 
-  renderListViewInfo = item => {
+  renderListViewInfo = contact => {
     return (
       <>
-        <div id="list-view-info">{this.renderAvatar(item.fullName)}</div>
-        <b>{item.fullName}</b>
+        <b>{contact.fullName}</b>
         <div id="list-view-div">
           <div id="list-view-p">
             <i className="fa fa-envelope" id="list-view-i"></i>
-            <p>{item.email}</p>
+            <p>{contact.email}</p>
           </div>
           <div id="list-view-p">
             <i className="fa fa-phone" id="list-view-i"></i>
-            <p>{item.phone}</p>
+            <p>{contact.phone}</p>
           </div>
         </div>
+
+        <Button color="link" onClick={() => this.toggleDeleteContact(contact)}>
+          <i className="fas fa-trash-alt"></i>
+        </Button>
+
+        <Button color="link" onClick={() => this.toggleAddContact(contact)}>
+          <i className="fas fa-cog"></i>
+        </Button>
+
+        <i className="fas fa-arrows-alt" style={{ color: '#007bff' }}></i>
       </>
     );
   };
 
-  renderAvatar = (name, inDetailView) => {
-    return (
-      <UserAvatar
-        className={inDetailView ? 'user-avatar-detail' : 'user-avatar-list'}
-        colors={['#e6f2ff']}
-        size="75"
-        name={name ? name : 'Test Name'}
-        // could add here a picture later
-        // src={person.picture}
-      />
-    );
-  };
+  renderDetailViewModal = () => {
+    const { contact, addContactModal } = this.state;
 
-  renderModal = () => {
-    if (!this.state.person) {
+    if (!contact) {
       return null;
     }
 
     return (
-      <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-        <ModalHeader toggle={this.toggle}>Kontakti teave</ModalHeader>
+      <Modal isOpen={addContactModal} toggle={this.toggleAddContact}>
+        <ModalHeader toggle={this.toggleAddContact}>Edit contact</ModalHeader>
         <ModalBody>{this.renderDetailInfo()}</ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={this.toggle}>
-            Back
+          <Button color="secondary" onClick={this.toggleAddContact}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
+    );
+  };
+
+  renderDeleteContactModal = () => {
+    const { contact, deleteContactModal } = this.state;
+
+    if (!contact) {
+      return null;
+    }
+
+    return (
+      <Modal isOpen={deleteContactModal} toggle={this.toggleDeleteContact}>
+        <ModalHeader toggle={this.toggleDeleteContact}>Delete contact</ModalHeader>
+        <ModalBody>Are you sure you want to delete this contact?</ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={() => this.deleteContact(contact.id)}>
+            Save
+          </Button>
+          <Button color="secondary" onClick={this.toggleDeleteContact}>
+            Cancel
           </Button>
         </ModalFooter>
       </Modal>
@@ -176,31 +225,23 @@ class App extends Component {
   };
 
   renderDetailInfo = () => {
-    const { person } = this.state;
+    const { contact } = this.state;
 
-    if (!person) {
+    if (!contact) {
       return null;
     }
 
     return (
-      <>
-        <ListGroup flush id="detail-list-group">
-          <ListGroupItem>
-            <div id="detail-list-group-div">{this.renderAvatar(person.fullName, true)}</div>
-            <b>{person.fullName}</b>
-          </ListGroupItem>
-        </ListGroup>
-        <div id="detail-list-group-2">
-          <div id="detail-div">
-            <p>Email</p>
-            <p>Phone</p>
-          </div>
-          <div>
-            <p>{person.email}</p>
-            <p>{person.phone}</p>
-          </div>
+      <div id="detail-list-group-2">
+        <div id="detail-div">
+          <p>Email</p>
+          <p>Phone</p>
         </div>
-      </>
+        <div>
+          <p>{contact.email}</p>
+          <p>{contact.phone}</p>
+        </div>
+      </div>
     );
   };
 }
