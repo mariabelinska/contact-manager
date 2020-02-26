@@ -8,6 +8,7 @@
     "react-beautiful-dnd": "^11.0.5",
     "react-dom": "^16.9.0",
     "react-scripts": "3.1.2",
+    "react-toastify": "^5.5.0",
     "reactstrap": "^8.0.1"
   },
   "scripts": {

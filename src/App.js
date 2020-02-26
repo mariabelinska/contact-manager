@@ -20,6 +20,7 @@ import {
 } from 'reactstrap';
 import './App.css';
 import { fetchData } from './services/fetch-data';
+import { toast } from 'react-toastify';
 
 class App extends React.Component {
   constructor(props) {
@@ -27,10 +28,10 @@ class App extends React.Component {
     this.state = {
       contactList: null,
       contact: null,
+      errorMessage: null,
       addContactModal: false,
       editContactModal: false,
       deleteContactModal: false,
-      errorMessage: null,
     };
   }
 
@@ -77,6 +78,8 @@ class App extends React.Component {
         errorMessage: null,
       });
     }
+
+    toast.info('Contact has been added!');
   };
 
   editContact = async (e, id) => {
@@ -109,6 +112,8 @@ class App extends React.Component {
         errorMessage: null,
       });
     }
+
+    toast.info('Contact has been edited!');
   };
 
   deleteContact = async id => {
@@ -120,6 +125,8 @@ class App extends React.Component {
 
     this.toggleDeleteContact();
     this.getContacts();
+
+    toast.info('Contact has been deleted!');
   };
 
   toggleAddContact = contact => {
@@ -187,15 +194,16 @@ class App extends React.Component {
             Add contact
           </Button>
 
+          {this.renderAddContactModal()}
+          {this.renderEditContactModal()}
+          {this.renderDeleteContactModal()}
+
           <h3 className="title">Contacts</h3>
 
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId="droppable">
               {provided => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {this.renderAddContactModal()}
-                  {this.renderEditContactModal()}
-                  {this.renderDeleteContactModal()}
                   {this.renderListViewItems(contactList)}
                   {provided.placeholder}
                 </div>
@@ -211,8 +219,8 @@ class App extends React.Component {
   renderListViewItems = contactList => {
     return (
       <ListGroup>
-        {contactList.map((item, index) => (
-          <Draggable key={item.id} draggableId={item.id} index={index}>
+        {contactList.map((contact, index) => (
+          <Draggable key={contact.id} draggableId={contact.id} index={index}>
             {provided => (
               <div
                 ref={provided.innerRef}
@@ -220,8 +228,8 @@ class App extends React.Component {
                 {...provided.dragHandleProps}
               >
                 <div id="draggable">
-                  <ListGroupItem key={item.id} tag="a" action>
-                    {this.renderListViewInfo(item)}
+                  <ListGroupItem key={contact.id} tag="a" action>
+                    {this.renderListViewInfo(contact)}
                   </ListGroupItem>
                 </div>
               </div>

@@ -104,3 +104,9 @@
 .error-message {
   color: red;
 }
+
+.toastify {
+  border-radius: 15px !important;
+  text-align: center;
+  font-size: 15px;
+}

@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+
+toast.configure({
+  position: toast.POSITION.TOP_CENTER,
+  toastClassName: 'toastify',
+});
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
