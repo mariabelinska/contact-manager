@@ -245,25 +245,29 @@ class App extends React.Component {
       <>
         <b>{contact.fullName}</b>
         <div className="contact-information">
-          <div className="contact-information-row">
-            <i className="fa fa-envelope" id="icon"></i>
-            <p>{contact.email}</p>
+          <div>
+            <div className="contact-information-row">
+              <i className="fa fa-envelope" id="icon"></i>
+              <p>{contact.email}</p>
+            </div>
+            <div className="contact-information-row">
+              <i className="fa fa-phone" id="icon"></i>
+              <p>{contact.phone}</p>
+            </div>
           </div>
-          <div className="contact-information-row">
-            <i className="fa fa-phone" id="icon"></i>
-            <p>{contact.phone}</p>
+          <div className="icons">
+            <Button
+              className="edit-icon"
+              color="link"
+              onClick={() => this.toggleEditContact(contact)}
+            >
+              <i className="fas fa-cog"></i>
+            </Button>
+            <Button color="link" onClick={() => this.toggleDeleteContact(contact)}>
+              <i className="fas fa-trash-alt"></i>
+            </Button>
           </div>
         </div>
-
-        <Button color="link" onClick={() => this.toggleDeleteContact(contact)}>
-          <i className="fas fa-trash-alt"></i>
-        </Button>
-
-        <Button color="link" onClick={() => this.toggleEditContact(contact)}>
-          <i className="fas fa-cog"></i>
-        </Button>
-
-        <i className="fas fa-arrows-alt" style={{ color: '#007bff' }}></i>
       </>
     );
   };
