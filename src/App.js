@@ -182,14 +182,14 @@ class App extends React.Component {
     }
 
     return (
-      <div id="body">
+      <div className="body">
         <Navbar color="dark" light expand="md">
           <NavbarBrand id="navbar-brand" href="/">
             Halvaa OÜ
           </NavbarBrand>
         </Navbar>
 
-        <Container id="container">
+        <Container className="container">
           <Button className="add-button" outline color="primary" onClick={this.toggleAddContact}>
             Add contact
           </Button>
@@ -211,7 +211,7 @@ class App extends React.Component {
             </Droppable>
           </DragDropContext>
         </Container>
-        <CardFooter id="card-footer" className="text-muted" />
+        <CardFooter id="card-footer" />
       </div>
     );
   }
@@ -227,7 +227,7 @@ class App extends React.Component {
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
               >
-                <div id="draggable">
+                <div className="contact-item">
                   <ListGroupItem key={contact.id} tag="a" action>
                     {this.renderListViewInfo(contact)}
                   </ListGroupItem>
@@ -244,13 +244,13 @@ class App extends React.Component {
     return (
       <>
         <b>{contact.fullName}</b>
-        <div id="list-view-div">
-          <div id="list-view-p">
-            <i className="fa fa-envelope" id="list-view-i"></i>
+        <div className="contact-information">
+          <div className="contact-information-row">
+            <i className="fa fa-envelope" id="icon"></i>
             <p>{contact.email}</p>
           </div>
-          <div id="list-view-p">
-            <i className="fa fa-phone" id="list-view-i"></i>
+          <div className="contact-information-row">
+            <i className="fa fa-phone" id="icon"></i>
             <p>{contact.phone}</p>
           </div>
         </div>
