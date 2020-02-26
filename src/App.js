@@ -63,23 +63,14 @@ class App extends React.Component {
     });
 
     if (apiResponse.errors) {
-      this.setState({
-        errorMessage: apiResponse.errors.map(e => e).join(', '),
-      });
-
+      this.setErrorMessage(apiResponse.errors);
       return;
     }
 
     this.toggleAddContact();
     this.getContacts();
 
-    if (this.state.errorMessage) {
-      this.setState({
-        errorMessage: null,
-      });
-    }
-
-    toast.info('Contact has been added!');
+    toast.info('Contact has been added');
   };
 
   editContact = async (e, id) => {
@@ -97,23 +88,14 @@ class App extends React.Component {
     });
 
     if (apiResponse.errors) {
-      this.setState({
-        errorMessage: apiResponse.errors.map(e => e).join(', '),
-      });
-
+      this.setErrorMessage(apiResponse.errors);
       return;
     }
 
     this.toggleEditContact();
     this.getContacts();
 
-    if (this.state.errorMessage) {
-      this.setState({
-        errorMessage: null,
-      });
-    }
-
-    toast.info('Contact has been edited!');
+    toast.info('Contact has been edited');
   };
 
   deleteContact = async id => {
@@ -126,7 +108,21 @@ class App extends React.Component {
     this.toggleDeleteContact();
     this.getContacts();
 
-    toast.info('Contact has been deleted!');
+    toast.info('Contact has been deleted');
+  };
+
+  removeErrorMessage = () => {
+    if (this.state.errorMessage) {
+      this.setState({
+        errorMessage: null,
+      });
+    }
+  };
+
+  setErrorMessage = errors => {
+    this.setState({
+      errorMessage: errors.map(e => e).join(', '),
+    });
   };
 
   toggleAddContact = contact => {
@@ -134,6 +130,8 @@ class App extends React.Component {
       addContactModal: !prevState.addContactModal,
       contact,
     }));
+
+    this.removeErrorMessage();
   };
 
   toggleEditContact = contact => {
@@ -141,6 +139,8 @@ class App extends React.Component {
       editContactModal: !prevState.editContactModal,
       contact,
     }));
+
+    this.removeErrorMessage();
   };
 
   toggleDeleteContact = contact => {
@@ -170,7 +170,7 @@ class App extends React.Component {
     );
 
     this.setState({
-      contactList: contactList,
+      contactList,
     });
   };
 
