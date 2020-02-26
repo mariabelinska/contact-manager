@@ -51,6 +51,8 @@ class App extends React.Component {
   addContact = async e => {
     e.preventDefault();
 
+    const sequence = this.getNewContactSequence();
+
     const apiResponse = await fetchData({
       method: 'POST',
       url: `/Contacts`,
@@ -59,6 +61,7 @@ class App extends React.Component {
         lastName: e.target.lastName.value,
         email: e.target.email.value,
         phone: e.target.phone.value,
+        sequence,
       },
     });
 
@@ -125,6 +128,26 @@ class App extends React.Component {
     });
   };
 
+  getNewContactSequence = () => {
+    const { contactList } = this.state;
+    const lastContactSequence = contactList.slice(-1)[0].sequence;
+    return lastContactSequence + 1000;
+  };
+
+  getNewDragSequence = (contactList, index) => {
+    const isFirstIndex = index <= 0;
+    const isLastIndex = index + 1 >= contactList.length;
+
+    if (isLastIndex) {
+      return contactList[contactList.length - 1].sequence + 1000;
+    }
+
+    const previousSequence = isFirstIndex ? 0 : contactList[index - 1].sequence;
+    const nextSequence = contactList[index + 1].sequence;
+    const newSequence = (previousSequence + nextSequence) / 2;
+    return newSequence;
+  };
+
   toggleAddContact = contact => {
     this.setState(prevState => ({
       addContactModal: !prevState.addContactModal,
@@ -154,7 +177,6 @@ class App extends React.Component {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
-
     return result;
   };
 
@@ -171,6 +193,21 @@ class App extends React.Component {
 
     this.setState({
       contactList,
+    });
+
+    this.updateContactSequence(contactList, result.destination.index);
+  };
+
+  updateContactSequence = async (contactList, index) => {
+    const newSequence = this.getNewDragSequence(contactList, index);
+    const contact = contactList[index];
+
+    contact.sequence = newSequence;
+
+    await fetchData({
+      method: 'PATCH',
+      url: `/Contacts/${contact.id}`,
+      json: contact,
     });
   };
 
