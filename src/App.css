@@ -24,8 +24,8 @@
 }
 
 .container {
-  padding-bottom: 70px;
-  padding-top: 35px;
+  padding-bottom: 90px;
+  padding-top: 40px;
 }
 
 .contact-item {
@@ -56,7 +56,7 @@
 }
 
 .title {
-  padding-bottom: 10px;
+  padding-bottom: 15px;
   padding-left: 3px;
 }
 
@@ -71,5 +71,5 @@
 }
 
 .edit-icon {
-  margin-right: -7px;
+  margin-right: -px;
 }
