@@ -12,6 +12,11 @@ import {
   Navbar,
   NavbarBrand,
   CardFooter,
+  FormGroup,
+  Label,
+  Col,
+  Input,
+  Form,
 } from 'reactstrap';
 import './App.css';
 import { fetchData } from './services/fetch-data';
@@ -24,6 +29,7 @@ class App extends React.Component {
       contact: null,
       addContactModal: false,
       deleteContactModal: false,
+      errorMessage: null,
     };
   }
 
@@ -38,6 +44,38 @@ class App extends React.Component {
     });
 
     this.setState({ contactList: apiResponse.data });
+  };
+
+  addContact = async e => {
+    e.preventDefault();
+
+    const apiResponse = await fetchData({
+      method: 'post',
+      url: `/Contacts`,
+      json: {
+        firstName: e.target.firstName.value,
+        lastName: e.target.lastName.value,
+        email: e.target.email.value,
+        phone: e.target.phone.value,
+      },
+    });
+
+    if (apiResponse.errors) {
+      this.setState({
+        errorMessage: apiResponse.errors.map(e => e).join(', '),
+      });
+
+      return;
+    }
+
+    this.toggleAddContact();
+    this.getContacts();
+
+    if (this.state.errorMessage) {
+      this.setState({
+        errorMessage: null,
+      });
+    }
   };
 
   deleteContact = async id => {
@@ -115,7 +153,8 @@ class App extends React.Component {
             <Droppable droppableId="droppable">
               {provided => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {this.renderDetailViewModal()}
+                  {this.renderAddContactModal()}
+                  {this.renderEditContactModal()}
                   {this.renderDeleteContactModal()}
                   {this.renderListViewItems(contactList)}
                   {provided.placeholder}
@@ -181,8 +220,8 @@ class App extends React.Component {
     );
   };
 
-  renderDetailViewModal = () => {
-    const { contact, addContactModal } = this.state;
+  renderAddContactModal = () => {
+    const { contact, addContactModal, errorMessage } = this.state;
 
     if (!contact) {
       return null;
@@ -190,10 +229,62 @@ class App extends React.Component {
 
     return (
       <Modal isOpen={addContactModal} toggle={this.toggleAddContact}>
-        <ModalHeader toggle={this.toggleAddContact}>Edit contact</ModalHeader>
-        <ModalBody>{this.renderDetailInfo()}</ModalBody>
+        <Form onSubmit={e => this.addContact(e)}>
+          <ModalHeader toggle={this.toggleAddContact}>Add contact</ModalHeader>
+          <ModalBody>
+            <FormGroup row>
+              <Label sm={3}>First name</Label>
+              <Col sm={9}>
+                <Input required name="firstName" placeholder="first name" />
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label sm={3}>Last name</Label>
+              <Col sm={9}>
+                <Input required name="lastName" placeholder="last name" />
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label sm={3}>Email</Label>
+              <Col sm={9}>
+                <Input required name="email" placeholder="email" />
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label sm={3}>Phone</Label>
+              <Col sm={9}>
+                <Input required name="phone" placeholder="phone" />
+              </Col>
+            </FormGroup>
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary">Save</Button>
+            <Button color="secondary" onClick={this.toggleAddContact}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Form>
+      </Modal>
+    );
+  };
+
+  renderEditContactModal = () => {
+    const { contact, editContactModal } = this.state;
+
+    if (!contact) {
+      return null;
+    }
+
+    return (
+      <Modal isOpen={editContactModal} toggle={this.toggleEditContact}>
+        <ModalHeader toggle={this.toggleEditContact}>Edit contact</ModalHeader>
+        <ModalBody>{this.renderEditContactFields()}</ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={this.toggleAddContact}>
+          <Button color="primary" onClick={() => this.editContact()}>
+            Save
+          </Button>
+          <Button color="secondary" onClick={this.toggleEditContact}>
             Cancel
           </Button>
         </ModalFooter>
@@ -224,7 +315,7 @@ class App extends React.Component {
     );
   };
 
-  renderDetailInfo = () => {
+  renderEditContactFields = () => {
     const { contact } = this.state;
 
     if (!contact) {

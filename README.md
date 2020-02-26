@@ -9,7 +9,7 @@ This application is a front end example and uses API from https://github.com/mar
 Functionalities:
 
 - Get contact list
-- Sort user list with drag and drop
+- Sort contact list with drag and drop
 - Add contact
 - Edit contact
 - Delete contact
