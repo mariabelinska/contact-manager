@@ -28,6 +28,7 @@ class App extends React.Component {
       contactList: null,
       contact: null,
       addContactModal: false,
+      editContactModal: false,
       deleteContactModal: false,
       errorMessage: null,
     };
@@ -39,7 +40,7 @@ class App extends React.Component {
 
   getContacts = async () => {
     const apiResponse = await fetchData({
-      method: 'get',
+      method: 'GET',
       url: `/Contacts`,
     });
 
@@ -50,7 +51,7 @@ class App extends React.Component {
     e.preventDefault();
 
     const apiResponse = await fetchData({
-      method: 'post',
+      method: 'POST',
       url: `/Contacts`,
       json: {
         firstName: e.target.firstName.value,
@@ -78,9 +79,41 @@ class App extends React.Component {
     }
   };
 
+  editContact = async (e, id) => {
+    e.preventDefault();
+
+    const apiResponse = await fetchData({
+      method: 'PATCH',
+      url: `/Contacts/${id}`,
+      json: {
+        firstName: e.target.firstName.value,
+        lastName: e.target.lastName.value,
+        email: e.target.email.value,
+        phone: e.target.phone.value,
+      },
+    });
+
+    if (apiResponse.errors) {
+      this.setState({
+        errorMessage: apiResponse.errors.map(e => e).join(', '),
+      });
+
+      return;
+    }
+
+    this.toggleEditContact();
+    this.getContacts();
+
+    if (this.state.errorMessage) {
+      this.setState({
+        errorMessage: null,
+      });
+    }
+  };
+
   deleteContact = async id => {
     await fetchData({
-      method: 'delete',
+      method: 'DELETE',
       url: `/Contacts/${id}`,
       hasNoResponse: true,
     });
@@ -92,6 +125,13 @@ class App extends React.Component {
   toggleAddContact = contact => {
     this.setState(prevState => ({
       addContactModal: !prevState.addContactModal,
+      contact,
+    }));
+  };
+
+  toggleEditContact = contact => {
+    this.setState(prevState => ({
+      editContactModal: !prevState.editContactModal,
       contact,
     }));
   };
@@ -211,7 +251,7 @@ class App extends React.Component {
           <i className="fas fa-trash-alt"></i>
         </Button>
 
-        <Button color="link" onClick={() => this.toggleAddContact(contact)}>
+        <Button color="link" onClick={() => this.toggleEditContact(contact)}>
           <i className="fas fa-cog"></i>
         </Button>
 
@@ -221,7 +261,7 @@ class App extends React.Component {
   };
 
   renderAddContactModal = () => {
-    const { contact, addContactModal, errorMessage } = this.state;
+    const { contact, addContactModal } = this.state;
 
     if (!contact) {
       return null;
@@ -231,33 +271,7 @@ class App extends React.Component {
       <Modal isOpen={addContactModal} toggle={this.toggleAddContact}>
         <Form onSubmit={e => this.addContact(e)}>
           <ModalHeader toggle={this.toggleAddContact}>Add contact</ModalHeader>
-          <ModalBody>
-            <FormGroup row>
-              <Label sm={3}>First name</Label>
-              <Col sm={9}>
-                <Input required name="firstName" placeholder="first name" />
-              </Col>
-            </FormGroup>
-            <FormGroup row>
-              <Label sm={3}>Last name</Label>
-              <Col sm={9}>
-                <Input required name="lastName" placeholder="last name" />
-              </Col>
-            </FormGroup>
-            <FormGroup row>
-              <Label sm={3}>Email</Label>
-              <Col sm={9}>
-                <Input required name="email" placeholder="email" />
-              </Col>
-            </FormGroup>
-            <FormGroup row>
-              <Label sm={3}>Phone</Label>
-              <Col sm={9}>
-                <Input required name="phone" placeholder="phone" />
-              </Col>
-            </FormGroup>
-            {errorMessage && <div className="error-message">{errorMessage}</div>}
-          </ModalBody>
+          <ModalBody>{this.renderContactFields()}</ModalBody>
           <ModalFooter>
             <Button color="primary">Save</Button>
             <Button color="secondary" onClick={this.toggleAddContact}>
@@ -278,16 +292,16 @@ class App extends React.Component {
 
     return (
       <Modal isOpen={editContactModal} toggle={this.toggleEditContact}>
-        <ModalHeader toggle={this.toggleEditContact}>Edit contact</ModalHeader>
-        <ModalBody>{this.renderEditContactFields()}</ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={() => this.editContact()}>
-            Save
-          </Button>
-          <Button color="secondary" onClick={this.toggleEditContact}>
-            Cancel
-          </Button>
-        </ModalFooter>
+        <Form onSubmit={e => this.editContact(e, contact.id)}>
+          <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
+          <ModalBody>{this.renderContactFields(contact)}</ModalBody>
+          <ModalFooter>
+            <Button color="primary">Save</Button>
+            <Button color="secondary" onClick={this.toggleEditContact}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Form>
       </Modal>
     );
   };
@@ -315,24 +329,57 @@ class App extends React.Component {
     );
   };
 
-  renderEditContactFields = () => {
-    const { contact } = this.state;
-
-    if (!contact) {
-      return null;
-    }
+  renderContactFields = contact => {
+    const { errorMessage } = this.state;
 
     return (
-      <div id="detail-list-group-2">
-        <div id="detail-div">
-          <p>Email</p>
-          <p>Phone</p>
-        </div>
-        <div>
-          <p>{contact.email}</p>
-          <p>{contact.phone}</p>
-        </div>
-      </div>
+      <>
+        <FormGroup row>
+          <Label sm={3}>First name</Label>
+          <Col sm={9}>
+            <Input
+              required
+              name="firstName"
+              placeholder="first name"
+              defaultValue={contact && contact.firstName}
+            />
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label sm={3}>Last name</Label>
+          <Col sm={9}>
+            <Input
+              required
+              name="lastName"
+              placeholder="last name"
+              defaultValue={contact && contact.lastName}
+            />
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label sm={3}>Email</Label>
+          <Col sm={9}>
+            <Input
+              required
+              name="email"
+              placeholder="email"
+              defaultValue={contact ? contact.email : null}
+            />
+          </Col>
+        </FormGroup>
+        <FormGroup row>
+          <Label sm={3}>Phone</Label>
+          <Col sm={9}>
+            <Input
+              required
+              name="phone"
+              placeholder="phone"
+              defaultValue={contact ? contact.phone : null}
+            />
+          </Col>
+        </FormGroup>
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
+      </>
     );
   };
 }
