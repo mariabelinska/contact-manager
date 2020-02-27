@@ -132,8 +132,8 @@ export class Contacts extends React.Component {
   };
 
   getNewDragSequence = (contactList, index) => {
-    const isFirstIndex = index <= 0;
-    const isLastIndex = index + 1 >= contactList.length;
+    const isFirstIndex = index === 0;
+    const isLastIndex = index + 1 === contactList.length;
 
     if (isLastIndex) {
       return contactList[contactList.length - 1].sequence + 1000;
