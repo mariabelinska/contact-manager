@@ -131,21 +131,6 @@ export class Contacts extends React.Component {
     return (lastContactSequence + 1000).toFixed(16);
   };
 
-  getNewDragSequence = (contactList, index) => {
-    const isFirstIndex = index === 0;
-    const isLastIndex = index + 1 === contactList.length;
-
-    if (isLastIndex) {
-      return contactList[contactList.length - 1].sequence + 1000;
-    }
-
-    const previousSequence = isFirstIndex ? 0 : contactList[index - 1].sequence;
-    const nextSequence = contactList[index + 1].sequence;
-    const newSequence = (previousSequence + nextSequence) / 2;
-
-    return newSequence.toFixed(16);
-  };
-
   toggleAddContact = contact => {
     this.setState(prevState => ({
       addContactModal: !prevState.addContactModal,
@@ -203,6 +188,21 @@ export class Contacts extends React.Component {
     contact.sequence = newSequence;
 
     await editContact(contact.id, contact);
+  };
+
+  getNewDragSequence = (contactList, index) => {
+    const isFirstIndex = index === 0;
+    const isLastIndex = index + 1 === contactList.length;
+
+    if (isLastIndex) {
+      return parseFloat(contactList[contactList.length - 1].sequence) + 1000;
+    }
+
+    const previousSequence = isFirstIndex ? 0 : parseFloat(contactList[index - 1].sequence);
+    const nextSequence = parseFloat(contactList[index + 1].sequence);
+    const newSequence = (previousSequence + nextSequence) / 2;
+
+    return newSequence.toFixed(16);
   };
 
   render() {

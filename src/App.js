@@ -1,8 +1,7 @@
 import React from 'react';
 import { Contacts } from './components/Contacts';
-import { Main } from './components/Main.jsx';
 import { Nav } from './components/Navbar';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { CardFooter } from 'reactstrap';
 import './style/App.css';
 
@@ -12,8 +11,10 @@ export default class App extends React.Component {
       <BrowserRouter>
         <div className="body">
           <Nav />
-          <Route exact path="/" component={Main} />
+
+          <Redirect from="/" to="/contacts" />
           <Route exact path="/contacts" component={Contacts} />
+
           <CardFooter id="card-footer" />
         </div>
       </BrowserRouter>
