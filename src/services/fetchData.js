@@ -1,13 +1,13 @@
-export async function fetchData({ method, url, hasNoResponse, json }) {
+export async function fetchData({ method, url, json }) {
   const response = await fetch(`${process.env.REACT_APP_SERVER_URL}${url}`, {
-    method: method,
+    method,
     headers: {
       'content-type': 'application/json',
     },
     body: json ? JSON.stringify(json) : null,
   });
 
-  if (hasNoResponse) {
+  if (method === 'DELETE' && response.status === 200) {
     return;
   }
 

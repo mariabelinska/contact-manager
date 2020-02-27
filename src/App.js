@@ -19,8 +19,9 @@ import {
   Form,
 } from 'reactstrap';
 import './App.css';
-import { fetchData } from './services/fetch-data';
+import { fetchData } from './services/fetchData';
 import { toast } from 'react-toastify';
+import { getContacts, addContact, editContact, deleteContact } from './services/contactService';
 
 class App extends React.Component {
   constructor(props) {
@@ -40,10 +41,7 @@ class App extends React.Component {
   }
 
   getContacts = async () => {
-    const apiResponse = await fetchData({
-      method: 'GET',
-      url: `/Contacts`,
-    });
+    const apiResponse = await getContacts();
 
     this.setState({ contactList: apiResponse.data });
   };
@@ -51,18 +49,16 @@ class App extends React.Component {
   addContact = async e => {
     e.preventDefault();
 
+    const { firstName, lastName, email, phone } = e.target;
+
     const sequence = this.getNewContactSequence();
 
-    const apiResponse = await fetchData({
-      method: 'POST',
-      url: `/Contacts`,
-      json: {
-        firstName: e.target.firstName.value,
-        lastName: e.target.lastName.value,
-        email: e.target.email.value,
-        phone: e.target.phone.value,
-        sequence,
-      },
+    const apiResponse = await addContact({
+      firstName: firstName.value,
+      lastName: lastName.value,
+      email: email.value,
+      phone: phone.value,
+      sequence,
     });
 
     if (apiResponse.errors) {
@@ -79,15 +75,14 @@ class App extends React.Component {
   editContact = async (e, id) => {
     e.preventDefault();
 
-    const apiResponse = await fetchData({
-      method: 'PATCH',
-      url: `/Contacts/${id}`,
-      json: {
-        firstName: e.target.firstName.value,
-        lastName: e.target.lastName.value,
-        email: e.target.email.value,
-        phone: e.target.phone.value,
-      },
+    const { firstName, lastName, email, phone, sequence } = e.target;
+
+    const apiResponse = await editContact(id, {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      email: email.value,
+      phone: phone.value,
+      sequence: sequence.value,
     });
 
     if (apiResponse.errors) {
@@ -105,7 +100,6 @@ class App extends React.Component {
     await fetchData({
       method: 'DELETE',
       url: `/Contacts/${id}`,
-      hasNoResponse: true,
     });
 
     this.toggleDeleteContact();
@@ -131,7 +125,8 @@ class App extends React.Component {
   getNewContactSequence = () => {
     const { contactList } = this.state;
     const lastContactSequence = contactList.slice(-1)[0].sequence;
-    return lastContactSequence + 1000;
+
+    return (lastContactSequence + 1000).toFixed(16);
   };
 
   getNewDragSequence = (contactList, index) => {
@@ -145,7 +140,8 @@ class App extends React.Component {
     const previousSequence = isFirstIndex ? 0 : contactList[index - 1].sequence;
     const nextSequence = contactList[index + 1].sequence;
     const newSequence = (previousSequence + nextSequence) / 2;
-    return newSequence;
+
+    return newSequence.toFixed(16);
   };
 
   toggleAddContact = contact => {
@@ -368,7 +364,7 @@ class App extends React.Component {
         <ModalBody>Are you sure you want to delete this contact?</ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={() => this.deleteContact(contact.id)}>
-            Save
+            Confirm
           </Button>
           <Button color="secondary" onClick={this.toggleDeleteContact}>
             Cancel
@@ -427,6 +423,13 @@ class App extends React.Component {
             />
           </Col>
         </FormGroup>
+        <Input
+          hidden
+          name="sequence"
+          placeholder="sequence"
+          defaultValue={contact ? contact.sequence : null}
+        />
+
         {errorMessage && <div className="error-message">{errorMessage}</div>}
       </>
     );
