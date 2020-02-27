@@ -10,7 +10,7 @@ export default class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
-        <div id="body">
+        <div className="body">
           <Nav />
           <Route exact path="/" component={Main} />
           <Route exact path="/contacts" component={Contacts} />
