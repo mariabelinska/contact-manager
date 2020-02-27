@@ -96,11 +96,15 @@ class App extends React.Component {
     toast.info('Contact has been edited');
   };
 
-  deleteContact = async id => {
-    await fetchData({
-      method: 'DELETE',
-      url: `/Contacts/${id}`,
-    });
+  deleteContact = async (e, id) => {
+    e.preventDefault();
+
+    const apiResponse = await deleteContact(id);
+
+    if (apiResponse && apiResponse.errors) {
+      this.setErrorMessage(Object.values(apiResponse.errors));
+      return;
+    }
 
     this.toggleDeleteContact();
     this.getContacts();
@@ -118,7 +122,7 @@ class App extends React.Component {
 
   setErrorMessage = errors => {
     this.setState({
-      errorMessage: errors.map(e => e).join(', '),
+      errorMessage: `Error: ${errors.map(e => e).join(', ')}`,
     });
   };
 
@@ -352,7 +356,7 @@ class App extends React.Component {
   };
 
   renderDeleteContactModal = () => {
-    const { contact, deleteContactModal } = this.state;
+    const { contact, deleteContactModal, errorMessage } = this.state;
 
     if (!contact) {
       return null;
@@ -361,9 +365,12 @@ class App extends React.Component {
     return (
       <Modal isOpen={deleteContactModal} toggle={this.toggleDeleteContact}>
         <ModalHeader toggle={this.toggleDeleteContact}>Delete contact</ModalHeader>
-        <ModalBody>Are you sure you want to delete this contact?</ModalBody>
+        <ModalBody>
+          <p>Are you sure you want to delete this contact?</p>
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
+        </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={() => this.deleteContact(contact.id)}>
+          <Button color="primary" onClick={e => this.deleteContact(e, contact.id)}>
             Confirm
           </Button>
           <Button color="secondary" onClick={this.toggleDeleteContact}>
@@ -429,7 +436,6 @@ class App extends React.Component {
           placeholder="sequence"
           defaultValue={contact ? contact.sequence : null}
         />
-
         {errorMessage && <div className="error-message">{errorMessage}</div>}
       </>
     );

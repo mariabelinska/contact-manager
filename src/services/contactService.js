@@ -1,6 +1,6 @@
 import { fetchData } from './fetchData';
 
-export async function getContacts(id, json) {
+export async function getContacts() {
   return fetchData({
     method: 'GET',
     url: `/Contacts`,
@@ -23,10 +23,9 @@ export async function editContact(id, json) {
   });
 }
 
-export async function deleteContact(id, json) {
+export async function deleteContact(id) {
   return fetchData({
-    method: 'PATCH',
+    method: 'DELETE',
     url: `/Contacts/${id}`,
-    json,
   });
 }
