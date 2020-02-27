@@ -1,0 +1,13 @@
+.body {
+  position: relative;
+  min-height: 100vh;
+}
+
+#card-footer {
+  margin-top: 20px;
+  border: none;
+  height: 40px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
