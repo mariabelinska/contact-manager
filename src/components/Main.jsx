@@ -4,7 +4,7 @@ import { Container } from 'reactstrap';
 export class Main extends React.Component {
   render() {
     return (
-      <Container id="container">
+      <Container>
         <p>Welcome!</p>
       </Container>
     );

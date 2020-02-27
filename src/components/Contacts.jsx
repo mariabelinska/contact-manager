@@ -16,8 +16,9 @@ import {
   Form,
 } from 'reactstrap';
 import '../style/Contacts.css';
+import '../style/App.css';
 import { toast } from 'react-toastify';
-import { getContacts, addContact, editContact, deleteContact } from '../services/contactService';
+import { getContacts, addContact, editContact, deleteContact } from '../services/contacts';
 
 export class Contacts extends React.Component {
   constructor(props) {
