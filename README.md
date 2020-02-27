@@ -2,7 +2,7 @@ Install node modules with `npm install`.
 
 Run the app with `npm start`.
 
-Drag and drop reorder implemented from: https://codesandbox.io/s/k260nyxq9v.
+Drag and drop implemented from: https://codesandbox.io/s/k260nyxq9v.
 
 This is a front end application example. In order it to run, first run the API from https://github.com/martintints/ContactsDemo
 
@@ -17,3 +17,14 @@ This application:
 - displays pop up notifications (toast) when completing actions like add/edit/delete contact
 - has error handling
 - has navigation
+- displays loading spinner when data is not yet fetched
+
+Solution steps:
+
+- First I created contact list, to display all contacts.
+- Then I added drag and drop and used third-party solution, since it is good practise to use already existing solutions and therefore speeds up development.
+- Then I created adding/editing/deleting functionality.
+- Then I added displaying errors
+- Then I decided to add pop up notification (toast) to inform user that action has been performed.
+- Then I added saving new sequence when performing drag and drop. The algorithm: take the sequences of previous and next contacts, and find the number exatcly between them and add this as a new sequence.
+- Then I decided to add loading spinner to show user when data is being fetched

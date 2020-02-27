@@ -5,7 +5,7 @@ export class Main extends React.Component {
   render() {
     return (
       <Container>
-        <p>Welcome!</p>
+        <h3 className="title">Welcome!</h3>
       </Container>
     );
   }

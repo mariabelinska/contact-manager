@@ -18,6 +18,7 @@ import {
 import '../style/Contacts.css';
 import '../style/App.css';
 import { toast } from 'react-toastify';
+import { ClipLoader } from 'react-spinners';
 import { getContacts, addContact, editContact, deleteContact } from '../services/contacts';
 
 export class Contacts extends React.Component {
@@ -208,7 +209,11 @@ export class Contacts extends React.Component {
     const { contactList } = this.state;
 
     if (!contactList) {
-      return null;
+      return (
+        <div className="clip-loader">
+          <ClipLoader sizeUnit={'px'} size={150} color={'grey'} loading={true} />
+        </div>
+      );
     }
 
     return (
