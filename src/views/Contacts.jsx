@@ -287,7 +287,7 @@ export class Contacts extends React.Component {
               color="link"
               onClick={() => this.toggleEditContact(contact)}
             >
-              <i className="fas fa-cog"></i>
+              <i className="fas fa-pen"></i>
             </Button>
             <Button color="link" onClick={() => this.toggleDeleteContact(contact)}>
               <i className="fas fa-trash-alt"></i>
