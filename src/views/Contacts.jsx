@@ -16,12 +16,12 @@ import {
   Form,
 } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { ClipLoader } from 'react-spinners';
 import { getContacts, addContact, editContact, deleteContact } from '../services/contacts';
 import '../style/Contacts.css';
 import '../style/Global.css';
 import reorder from '../services/reorder';
 import { getSequenceAfterAdd, getSequenceAfterDrag } from '../services/sequences';
+import { Loader } from '../components/Loader';
 
 export class Contacts extends React.Component {
   constructor(props) {
@@ -183,11 +183,7 @@ export class Contacts extends React.Component {
     const { contactList } = this.state;
 
     if (!contactList) {
-      return (
-        <div className="clip-loader">
-          <ClipLoader sizeUnit={'px'} size={150} color={'grey'} loading={true} />
-        </div>
-      );
+      return <Loader />;
     }
 
     return (
