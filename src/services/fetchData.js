@@ -1,4 +1,4 @@
-export async function fetchData({ method, url, json }) {
+export default async function fetchData({ method, url, json }) {
   const response = await fetch(`${process.env.REACT_APP_SERVER_URL}${url}`, {
     method,
     headers: {

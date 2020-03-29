@@ -3,7 +3,7 @@ import { Contacts } from './views/Contacts';
 import { Nav } from './components/Navbar';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { CardFooter } from 'reactstrap';
-import './style/App.css';
+import './style/Global.css';
 
 export default class App extends React.Component {
   render() {

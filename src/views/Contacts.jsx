@@ -19,7 +19,9 @@ import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 import { getContacts, addContact, editContact, deleteContact } from '../services/contacts';
 import '../style/Contacts.css';
-import '../style/App.css';
+import '../style/Global.css';
+import reorder from '../services/reorder';
+import { getSequenceAfterAdd, getSequenceAfterDrag } from '../services/sequences';
 
 export class Contacts extends React.Component {
   constructor(props) {
@@ -48,8 +50,9 @@ export class Contacts extends React.Component {
     e.preventDefault();
 
     const { firstName, lastName, email, phone } = e.target;
+    const { contactList } = this.state;
 
-    const sequence = this.getNewContactSequence();
+    const sequence = getSequenceAfterAdd(contactList);
 
     const apiResponse = await addContact({
       firstName: firstName.value,
@@ -124,13 +127,6 @@ export class Contacts extends React.Component {
     });
   };
 
-  getNewContactSequence = () => {
-    const { contactList } = this.state;
-    const lastContactSequence = contactList.slice(-1)[0].sequence;
-
-    return (lastContactSequence + 1000).toFixed(16);
-  };
-
   toggleAddContact = contact => {
     this.setState(prevState => ({
       addContactModal: !prevState.addContactModal,
@@ -156,19 +152,12 @@ export class Contacts extends React.Component {
     }));
   };
 
-  reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-  };
-
   onDragEnd = result => {
     if (!result.destination) {
       return;
     }
 
-    const contactList = this.reorder(
+    const contactList = reorder(
       this.state.contactList,
       result.source.index,
       result.destination.index,
@@ -182,27 +171,12 @@ export class Contacts extends React.Component {
   };
 
   updateContactSequence = async (contactList, index) => {
-    const newSequence = this.getNewDragSequence(contactList, index);
+    const newSequence = getSequenceAfterDrag(contactList, index);
     const contact = contactList[index];
 
     contact.sequence = newSequence;
 
     await editContact(contact.id, contact);
-  };
-
-  getNewDragSequence = (contactList, index) => {
-    const isFirstIndex = index === 0;
-    const isLastIndex = index + 1 === contactList.length;
-
-    if (isLastIndex) {
-      return parseFloat(contactList[contactList.length - 1].sequence) + 1000;
-    }
-
-    const previousSequence = isFirstIndex ? 0 : parseFloat(contactList[index - 1].sequence);
-    const nextSequence = parseFloat(contactList[index + 1].sequence);
-    const newSequence = (previousSequence + nextSequence) / 2;
-
-    return newSequence.toFixed(16);
   };
 
   render() {
