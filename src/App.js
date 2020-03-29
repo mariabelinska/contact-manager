@@ -1,5 +1,5 @@
 import React from 'react';
-import { Contacts } from './views/Contacts';
+import { Contacts } from './views/contacts/ContactList';
 import { Nav } from './components/Navbar';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { CardFooter } from 'reactstrap';

@@ -9,19 +9,16 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  FormGroup,
-  Label,
-  Col,
-  Input,
   Form,
 } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { getContacts, addContact, editContact, deleteContact } from '../services/contacts';
-import '../style/Contacts.css';
-import '../style/Global.css';
-import reorder from '../services/reorder';
-import { getSequenceAfterAdd, getSequenceAfterDrag } from '../services/sequences';
-import { Loader } from '../components/Loader';
+import { getContacts, addContact, editContact, deleteContact } from '../../services/contacts';
+import '../../style/Contacts.css';
+import '../../style/Global.css';
+import reorder from '../../services/reorder';
+import { getSequenceAfterAdd, getSequenceAfterDrag } from '../../services/sequences';
+import { Loader } from '../../components/Loader';
+import { ContactFields } from './ContactFields';
 
 export class Contacts extends React.Component {
   constructor(props) {
@@ -269,7 +266,7 @@ export class Contacts extends React.Component {
   };
 
   renderAddContactModal = () => {
-    const { contact, addContactModal } = this.state;
+    const { contact, addContactModal, errorMessage } = this.state;
 
     if (!contact) {
       return null;
@@ -279,7 +276,9 @@ export class Contacts extends React.Component {
       <Modal isOpen={addContactModal} toggle={this.toggleAddContact}>
         <Form onSubmit={e => this.addContact(e)}>
           <ModalHeader toggle={this.toggleAddContact}>Add contact</ModalHeader>
-          <ModalBody>{this.renderContactFields()}</ModalBody>
+          <ModalBody>
+            <ContactFields errorMessage={errorMessage} />
+          </ModalBody>
           <ModalFooter>
             <Button color="primary">Save</Button>
             <Button color="secondary" onClick={this.toggleAddContact}>
@@ -292,7 +291,7 @@ export class Contacts extends React.Component {
   };
 
   renderEditContactModal = () => {
-    const { contact, editContactModal } = this.state;
+    const { contact, editContactModal, errorMessage } = this.state;
 
     if (!contact) {
       return null;
@@ -302,7 +301,9 @@ export class Contacts extends React.Component {
       <Modal isOpen={editContactModal} toggle={this.toggleEditContact}>
         <Form onSubmit={e => this.editContact(e, contact.id)}>
           <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
-          <ModalBody>{this.renderContactFields(contact)}</ModalBody>
+          <ModalBody>
+            <ContactFields contact={contact} errorMessage={errorMessage} />
+          </ModalBody>
           <ModalFooter>
             <Button color="primary">Save</Button>
             <Button color="secondary" onClick={this.toggleEditContact}>
@@ -337,66 +338,6 @@ export class Contacts extends React.Component {
           </Button>
         </ModalFooter>
       </Modal>
-    );
-  };
-
-  renderContactFields = contact => {
-    const { errorMessage } = this.state;
-
-    return (
-      <>
-        <FormGroup row>
-          <Label sm={3}>First name</Label>
-          <Col sm={9}>
-            <Input
-              required
-              name="firstName"
-              placeholder="first name"
-              defaultValue={contact && contact.firstName}
-            />
-          </Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm={3}>Last name</Label>
-          <Col sm={9}>
-            <Input
-              required
-              name="lastName"
-              placeholder="last name"
-              defaultValue={contact && contact.lastName}
-            />
-          </Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm={3}>Email</Label>
-          <Col sm={9}>
-            <Input
-              required
-              name="email"
-              placeholder="email"
-              defaultValue={contact ? contact.email : null}
-            />
-          </Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm={3}>Phone</Label>
-          <Col sm={9}>
-            <Input
-              required
-              name="phone"
-              placeholder="phone"
-              defaultValue={contact ? contact.phone : null}
-            />
-          </Col>
-        </FormGroup>
-        <Input
-          hidden
-          name="sequence"
-          placeholder="sequence"
-          defaultValue={contact ? contact.sequence : null}
-        />
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
-      </>
     );
   };
 }
