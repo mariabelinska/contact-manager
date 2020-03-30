@@ -2,7 +2,7 @@ import React from 'react';
 import { Contacts } from './views/contacts/ContactList';
 import { Nav } from './components/Navbar';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { CardFooter } from 'reactstrap';
+import { CardFooter, Container } from 'reactstrap';
 import './style/Global.css';
 
 export default class App extends React.Component {
@@ -13,7 +13,10 @@ export default class App extends React.Component {
           <Nav />
 
           <Redirect from="/" to="/contacts" />
-          <Route exact path="/contacts" component={Contacts} />
+
+          <Container className="container">
+            <Route exact path="/contacts" component={Contacts} />
+          </Container>
 
           <CardFooter id="card-footer" />
         </div>

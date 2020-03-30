@@ -3,7 +3,6 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   ListGroup,
   ListGroupItem,
-  Container,
   Button,
   Modal,
   ModalHeader,
@@ -16,7 +15,7 @@ import { getContacts, addContact, editContact, deleteContact } from '../../servi
 import '../../style/Contacts.css';
 import '../../style/Global.css';
 import reorder from '../../services/reorder';
-import { getSequenceAfterAdd, getSequenceAfterDrag } from '../../services/sequences';
+import { getSequenceAfterAdd, updateContactSequence } from '../../services/sequences';
 import { Loader } from '../../components/Loader';
 import { ContactFields } from './ContactFields';
 
@@ -120,7 +119,7 @@ export class Contacts extends React.Component {
 
   setErrorMessage = errors => {
     this.setState({
-      errorMessage: `Error: ${errors.map(e => e).join(', ')}`,
+      errorMessage: `Error(s): ${errors.map(e => e).join(', ')}`,
     });
   };
 
@@ -164,16 +163,7 @@ export class Contacts extends React.Component {
       contactList,
     });
 
-    this.updateContactSequence(contactList, result.destination.index);
-  };
-
-  updateContactSequence = async (contactList, index) => {
-    const newSequence = getSequenceAfterDrag(contactList, index);
-    const contact = contactList[index];
-
-    contact.sequence = newSequence;
-
-    await editContact(contact.id, contact);
+    updateContactSequence(contactList, result.destination.index);
   };
 
   render() {
@@ -184,7 +174,7 @@ export class Contacts extends React.Component {
     }
 
     return (
-      <Container className="container">
+      <>
         <Button className="add-button" outline color="primary" onClick={this.toggleAddContact}>
           Add contact
         </Button>
@@ -205,7 +195,7 @@ export class Contacts extends React.Component {
             )}
           </Droppable>
         </DragDropContext>
-      </Container>
+      </>
     );
   }
 

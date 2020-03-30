@@ -1,3 +1,5 @@
+import { editContact } from './contacts';
+
 export function getSequenceAfterAdd(list) {
   const lastContactSequence = list.slice(-1)[0].sequence;
 
@@ -17,4 +19,13 @@ export function getSequenceAfterDrag(list, index) {
   const newSequence = (previousSequence + nextSequence) / 2;
 
   return newSequence;
+}
+
+export async function updateContactSequence(contactList, index) {
+  const newSequence = getSequenceAfterDrag(contactList, index);
+  const contact = contactList[index];
+
+  contact.sequence = newSequence;
+
+  await editContact(contact.id, contact);
 }
