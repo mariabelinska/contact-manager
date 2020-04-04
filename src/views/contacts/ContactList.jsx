@@ -20,17 +20,14 @@ import { Loader } from '../../components/Loader';
 import { ContactFields } from './ContactFields';
 
 export class Contacts extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      contactList: null,
-      contact: null,
-      errorMessage: null,
-      addContactModal: false,
-      editContactModal: false,
-      deleteContactModal: false,
-    };
-  }
+  state = {
+    contactList: null,
+    contact: null,
+    errorMessage: null,
+    addContactModal: false,
+    editContactModal: false,
+    deleteContactModal: false,
+  };
 
   componentDidMount() {
     this.getContacts();
