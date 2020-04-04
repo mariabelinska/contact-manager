@@ -2,7 +2,7 @@ import React from 'react';
 import { FormGroup, Label, Col, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 
-export const ContactFields = ({ errorMessage, contact }) => (
+export const ContactModalFields = ({ errorMessage, contact }) => (
   <>
     <FormGroup row>
       <Label sm={3}>First name</Label>
@@ -58,7 +58,7 @@ export const ContactFields = ({ errorMessage, contact }) => (
   </>
 );
 
-ContactFields.propTypes = {
+ContactModalFields.propTypes = {
   contact: PropTypes.object,
   errorMessage: PropTypes.string,
 };

@@ -17,9 +17,10 @@ import '../../style/Global.css';
 import reorder from '../../services/reorder';
 import { getSequenceAfterAdd, updateContactSequence } from '../../services/sequences';
 import { Loader } from '../../components/Loader';
-import { ContactFields } from './ContactFields';
+import { ContactModalFields } from './ContactModalFields';
+import ContactListElement from './ContactListElement';
 
-export class Contacts extends React.Component {
+export class ContactsView extends React.Component {
   state = {
     contactList: null,
     contact: null,
@@ -209,7 +210,11 @@ export class Contacts extends React.Component {
               >
                 <div className="contact-item">
                   <ListGroupItem key={contact.id} tag="a" action>
-                    {this.renderListViewInfo(contact)}
+                    <ContactListElement
+                      contact={contact}
+                      toggleEditContact={this.toggleEditContact}
+                      toggleDeleteContact={this.toggleDeleteContact}
+                    />
                   </ListGroupItem>
                 </div>
               </div>
@@ -217,38 +222,6 @@ export class Contacts extends React.Component {
           </Draggable>
         ))}
       </ListGroup>
-    );
-  };
-
-  renderListViewInfo = contact => {
-    return (
-      <>
-        <b>{contact.fullName}</b>
-        <div className="contact-information">
-          <div>
-            <div className="contact-information-row">
-              <i className="fa fa-envelope" id="icon"></i>
-              <p>{contact.email}</p>
-            </div>
-            <div className="contact-information-row">
-              <i className="fa fa-phone" id="icon"></i>
-              <p>{contact.phone}</p>
-            </div>
-          </div>
-          <div className="icons">
-            <Button
-              className="edit-icon"
-              color="link"
-              onClick={() => this.toggleEditContact(contact)}
-            >
-              <i className="fas fa-pen"></i>
-            </Button>
-            <Button color="link" onClick={() => this.toggleDeleteContact(contact)}>
-              <i className="fas fa-trash-alt"></i>
-            </Button>
-          </div>
-        </div>
-      </>
     );
   };
 
@@ -264,7 +237,7 @@ export class Contacts extends React.Component {
         <Form onSubmit={e => this.addContact(e)}>
           <ModalHeader toggle={this.toggleAddContact}>Add contact</ModalHeader>
           <ModalBody>
-            <ContactFields errorMessage={errorMessage} />
+            <ContactModalFields errorMessage={errorMessage} />
           </ModalBody>
           <ModalFooter>
             <Button color="primary">Save</Button>
@@ -289,7 +262,7 @@ export class Contacts extends React.Component {
         <Form onSubmit={e => this.editContact(e, contact.id)}>
           <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
           <ModalBody>
-            <ContactFields contact={contact} errorMessage={errorMessage} />
+            <ContactModalFields contact={contact} errorMessage={errorMessage} />
           </ModalBody>
           <ModalFooter>
             <Button color="primary">Save</Button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Contacts } from './views/contacts/ContactList';
+import { ContactsView } from './views/contacts/ContactsView';
 import { Nav } from './components/Navbar';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { CardFooter, Container } from 'reactstrap';
@@ -15,7 +15,7 @@ export default class App extends React.Component {
           <Redirect from="/" to="/contacts" />
 
           <Container className="container">
-            <Route exact path="/contacts" component={Contacts} />
+            <Route exact path="/contacts" component={ContactsView} />
           </Container>
 
           <CardFooter id="card-footer" />
