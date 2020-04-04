@@ -59,6 +59,6 @@ export const ContactModalFields = ({ errorMessage, contact }) => (
 );
 
 ContactModalFields.propTypes = {
-  contact: PropTypes.object,
-  errorMessage: PropTypes.string,
+  contact: PropTypes.object.isRequired,
+  errorMessage: PropTypes.string.isRequired,
 };

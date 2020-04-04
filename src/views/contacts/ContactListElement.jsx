@@ -29,9 +29,9 @@ const ContactListElement = ({ contact, toggleEditContact, toggleDeleteContact })
 );
 
 ContactListElement.propTypes = {
-  contact: PropTypes.object,
-  toggleEditContact: PropTypes.func,
-  toggleDeleteContact: PropTypes.func,
+  contact: PropTypes.object.isRequired,
+  toggleEditContact: PropTypes.func.isRequired,
+  toggleDeleteContact: PropTypes.func.isRequired,
 };
 
 export default ContactListElement;

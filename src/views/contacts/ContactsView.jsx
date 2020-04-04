@@ -19,6 +19,8 @@ import { getSequenceAfterAdd, updateContactSequence } from '../../services/seque
 import { Loader } from '../../components/Loader';
 import { ContactModalFields } from './ContactModalFields';
 import ContactListElement from './ContactListElement';
+import AddButton from '../../components/AddButton';
+import Title from '../../components/Title';
 
 export class ContactsView extends React.Component {
   state = {
@@ -173,15 +175,13 @@ export class ContactsView extends React.Component {
 
     return (
       <>
-        <Button className="add-button" outline color="primary" onClick={this.toggleAddContact}>
-          Add contact
-        </Button>
+        <AddButton title="Add contact" onClick={this.toggleAddContact} />
 
         {this.renderAddContactModal()}
         {this.renderEditContactModal()}
         {this.renderDeleteContactModal()}
 
-        <h3 className="title">Contacts</h3>
+        <Title name="Contacts" />
 
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId="droppable">
