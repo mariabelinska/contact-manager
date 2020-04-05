@@ -1,22 +1,12 @@
 import React from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import {
-  ListGroup,
-  ListGroupItem,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
-} from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { getContacts, addContact, editContact, deleteContact } from '../../services/contacts';
 import '../../style/Contacts.css';
 import '../../style/Global.css';
-import reorder from '../../services/reorder';
-import { getSequenceAfterAdd, updateContactSequence } from '../../services/sequences';
+import { getSequenceAfterAdd } from '../../services/sequences';
 import { Loader } from '../../components/Loader';
+import { DragDropElementList } from '../../components/DragDropElementList';
 import { ContactModalFields } from './ContactModalFields';
 import ContactListElement from './ContactListElement';
 import AddButton from '../../components/AddButton';
@@ -35,6 +25,10 @@ export class ContactsView extends React.Component {
   componentDidMount() {
     this.getContacts();
   }
+
+  setContactList = newContactList => {
+    this.setState({ contactList: newContactList });
+  };
 
   getContacts = async () => {
     const apiResponse = await getContacts();
@@ -148,24 +142,6 @@ export class ContactsView extends React.Component {
     }));
   };
 
-  onDragEnd = result => {
-    if (!result.destination) {
-      return;
-    }
-
-    const contactList = reorder(
-      this.state.contactList,
-      result.source.index,
-      result.destination.index,
-    );
-
-    this.setState({
-      contactList,
-    });
-
-    updateContactSequence(contactList, result.destination.index);
-  };
-
   render() {
     const { contactList } = this.state;
 
@@ -183,47 +159,22 @@ export class ContactsView extends React.Component {
 
         <Title name="Contacts" />
 
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          <Droppable droppableId="droppable">
-            {provided => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                {this.renderListViewItems(contactList)}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <DragDropElementList
+          list={contactList}
+          listElement={this.renderContactListElement}
+          updateList={this.setContactList}
+        />
       </>
     );
   }
 
-  renderListViewItems = contactList => {
-    return (
-      <ListGroup>
-        {contactList.map((contact, index) => (
-          <Draggable key={contact.id} draggableId={contact.id} index={index}>
-            {provided => (
-              <div
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-              >
-                <div className="contact-item">
-                  <ListGroupItem key={contact.id} tag="a" action>
-                    <ContactListElement
-                      contact={contact}
-                      toggleEditContact={this.toggleEditContact}
-                      toggleDeleteContact={this.toggleDeleteContact}
-                    />
-                  </ListGroupItem>
-                </div>
-              </div>
-            )}
-          </Draggable>
-        ))}
-      </ListGroup>
-    );
-  };
+  renderContactListElement = contact => (
+    <ContactListElement
+      contact={contact}
+      toggleEditContact={this.toggleEditContact}
+      toggleDeleteContact={this.toggleDeleteContact}
+    />
+  );
 
   renderAddContactModal = () => {
     const { contact, addContactModal, errorMessage } = this.state;
