@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ListGroup, ListGroupItem } from 'reactstrap';
-import reorder from '../services/reorder';
-import { updateContactSequence } from '../services/sequences';
+import onDragEnd from '../services/onDragEnd';
 
 export const DragDropElementList = ({ list, listElement, updateList }) => {
   return (
@@ -38,18 +37,6 @@ const renderListViewItems = (list, listElement) => {
       ))}
     </ListGroup>
   );
-};
-
-const onDragEnd = (result, list, updateList) => {
-  if (!result.destination) {
-    return;
-  }
-
-  const newList = reorder(list, result.source.index, result.destination.index);
-
-  updateList(newList);
-
-  updateContactSequence(newList, result.destination.index);
 };
 
 DragDropElementList.propTypes = {
