@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'reactstrap';
 
-const ContactListElement = ({ contact, toggleEditContact, toggleDeleteContact }) => (
+const ContactElement = ({ contact, toggleEditContact, toggleDeleteContact }) => (
   <>
     <b>{contact.fullName}</b>
     <div className="contact-information">
@@ -28,10 +28,10 @@ const ContactListElement = ({ contact, toggleEditContact, toggleDeleteContact })
   </>
 );
 
-ContactListElement.propTypes = {
+ContactElement.propTypes = {
   contact: PropTypes.object.isRequired,
   toggleEditContact: PropTypes.func.isRequired,
   toggleDeleteContact: PropTypes.func.isRequired,
 };
 
-export default ContactListElement;
+export default ContactElement;

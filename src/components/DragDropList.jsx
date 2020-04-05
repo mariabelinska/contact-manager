@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import onDragEnd from '../services/onDragEnd';
 
-export const DragDropElementList = ({ list, listElement, updateList }) => {
+export const DragDropList = ({ list, listElement, updateList }) => {
   return (
     <DragDropContext onDragEnd={result => onDragEnd(result, list, updateList)}>
       <Droppable droppableId="droppable">
@@ -39,10 +39,10 @@ const renderListViewItems = (list, listElement) => {
   );
 };
 
-DragDropElementList.propTypes = {
+DragDropList.propTypes = {
   list: PropTypes.array.isRequired,
   listElement: PropTypes.func.isRequired,
   updateList: PropTypes.func.isRequired,
 };
 
-export default DragDropElementList;
+export default DragDropList;

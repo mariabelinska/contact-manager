@@ -6,9 +6,9 @@ import '../../style/Contacts.css';
 import '../../style/Global.css';
 import { getSequenceAfterAdd } from '../../services/sequences';
 import { Loader } from '../../components/Loader';
-import { DragDropElementList } from '../../components/DragDropElementList';
+import { DragDropList } from '../../components/DragDropList';
 import { ContactModalFields } from './ContactModalFields';
-import ContactListElement from './ContactListElement';
+import ContactElement from './ContactElement';
 import AddButton from '../../components/AddButton';
 import Title from '../../components/Title';
 
@@ -26,14 +26,14 @@ export class ContactsView extends React.Component {
     this.getContacts();
   }
 
-  setContactList = newContactList => {
-    this.setState({ contactList: newContactList });
-  };
-
   getContacts = async () => {
     const apiResponse = await getContacts();
 
-    this.setState({ contactList: apiResponse.data });
+    this.updateContactList(apiResponse.data);
+  };
+
+  updateContactList = newContactList => {
+    this.setState({ contactList: newContactList });
   };
 
   addContact = async e => {
@@ -159,17 +159,17 @@ export class ContactsView extends React.Component {
 
         <Title name="Contacts" />
 
-        <DragDropElementList
+        <DragDropList
           list={contactList}
-          listElement={this.renderContactListElement}
-          updateList={this.setContactList}
+          listElement={this.renderContactElement}
+          updateList={this.updateContactList}
         />
       </>
     );
   }
 
-  renderContactListElement = contact => (
-    <ContactListElement
+  renderContactElement = contact => (
+    <ContactElement
       contact={contact}
       toggleEditContact={this.toggleEditContact}
       toggleDeleteContact={this.toggleDeleteContact}
