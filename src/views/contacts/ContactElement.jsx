@@ -26,16 +26,17 @@ const ContactElement = ({
       </div>
       <div className="icons">
         <Modal
-          onModalOpen={() => toggleContact(contact)}
+          customToggle={() => toggleContact(contact)}
           onModalSubmit={editContact}
           modalBody={renderEditModalBody}
           modalTitle="Edit contact"
           buttonClassName="edit-icon"
           buttonColor="link"
           buttonBody={editButtonBody}
+          errorMessage={errorMessage}
         />
         <Modal
-          onModalOpen={() => toggleContact(contact)}
+          customToggle={() => toggleContact(contact)}
           onSuccess={deleteContact}
           modalBody={() => renderDeleteModalBody(errorMessage)}
           modalTitle="Delete contact"

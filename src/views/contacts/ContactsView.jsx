@@ -50,7 +50,7 @@ export class ContactsView extends React.Component {
 
     if (apiResponse.errors) {
       this.setErrorMessage(apiResponse.errors);
-      return;
+      return apiResponse.errors;
     }
 
     this.getContacts();
@@ -75,7 +75,7 @@ export class ContactsView extends React.Component {
 
     if (apiResponse.errors) {
       this.setErrorMessage(apiResponse.errors);
-      return;
+      return apiResponse.errors;
     }
 
     this.getContacts();
@@ -91,8 +91,8 @@ export class ContactsView extends React.Component {
     const apiResponse = await deleteContact(id);
 
     if (apiResponse && apiResponse.errors) {
-      this.setErrorMessage(Object.values(apiResponse.errors));
-      return;
+      this.setErrorMessage(apiResponse.errors);
+      return apiResponse.errors;
     }
 
     this.getContacts();
@@ -132,6 +132,7 @@ export class ContactsView extends React.Component {
     return (
       <>
         <Modal
+          customToggle={this.toggleContact}
           onModalSubmit={this.addContact}
           modalBody={this.renderAddModalBody}
           modalTitle="Edit contact"
@@ -158,6 +159,7 @@ export class ContactsView extends React.Component {
       editContact={this.editContact}
       deleteContact={this.deleteContact}
       renderEditModalBody={this.renderEditModalBody}
+      errorMessage={this.state.errorMessage}
     />
   );
 
