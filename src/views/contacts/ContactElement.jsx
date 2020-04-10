@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'reactstrap';
+import CustomModal from '../../components/CustomModal';
 
-const ContactElement = ({ contact, toggleEditContact, toggleDeleteContact }) => (
+const ContactElement = ({
+  contact,
+  toggleEditContact,
+  toggleDeleteContact,
+  editContact,
+  renderEditModalBody,
+}) => (
   <>
     <b>{contact.fullName}</b>
     <div className="contact-information">
@@ -17,16 +23,34 @@ const ContactElement = ({ contact, toggleEditContact, toggleDeleteContact }) => 
         </div>
       </div>
       <div className="icons">
-        <Button className="edit-icon" color="link" onClick={() => toggleEditContact(contact)}>
-          <i className="fas fa-pen"></i>
-        </Button>
-        <Button color="link" onClick={() => toggleDeleteContact(contact)}>
+        <CustomModal
+          customToggle={() => toggleEditContact(contact)}
+          onModalSubmit={editContact}
+          modalBody={renderEditModalBody}
+          modalTitle="Edit contact"
+          successButtonTitle="Save"
+          buttonClassName="edit-icon"
+          buttonColor="link"
+          buttonBody={editButtonBody}
+        />
+        <CustomModal
+          customToggle={() => toggleDeleteContact(contact)}
+          modalBody={renderEditModalBody}
+          modalTitle="Delete contact"
+          buttonColor="link"
+          buttonBody={deleteButtonBody}
+        />
+        {/* <Button color="link" onClick={() => toggleDeleteContact(contact)}>
           <i className="fas fa-trash-alt"></i>
-        </Button>
+        </Button> */}
       </div>
     </div>
   </>
 );
+
+const editButtonBody = <i className="fas fa-pen"></i>;
+
+const deleteButtonBody = <i className="fas fa-trash-alt"></i>;
 
 ContactElement.propTypes = {
   contact: PropTypes.object.isRequired,

@@ -63,7 +63,11 @@ export class ContactsView extends React.Component {
     toast.info('Contact has been added');
   };
 
-  editContact = async (e, id) => {
+  editContact = async e => {
+    const { id } = this.state.contact;
+
+    console.log('contact id', id);
+    console.log('e', e);
     e.preventDefault();
 
     const { firstName, lastName, email, phone, sequence } = e.target;
@@ -127,10 +131,9 @@ export class ContactsView extends React.Component {
   };
 
   toggleEditContact = contact => {
-    this.setState(prevState => ({
-      editContactModal: !prevState.editContactModal,
+    this.setState({
       contact,
-    }));
+    });
 
     this.removeErrorMessage();
   };
@@ -154,8 +157,7 @@ export class ContactsView extends React.Component {
         <AddButton title="Add contact" onClick={this.toggleAddContact} />
 
         {this.renderAddContactModal()}
-        {this.renderEditContactModal()}
-        {this.renderDeleteContactModal()}
+        {/* {this.renderDeleteContactModal()} */}
 
         <Title name="Contacts" />
 
@@ -173,6 +175,8 @@ export class ContactsView extends React.Component {
       contact={contact}
       toggleEditContact={this.toggleEditContact}
       toggleDeleteContact={this.toggleDeleteContact}
+      editContact={this.editContact}
+      renderEditModalBody={this.renderEditModalBody}
     />
   );
 
@@ -201,29 +205,37 @@ export class ContactsView extends React.Component {
     );
   };
 
-  renderEditContactModal = () => {
-    const { contact, editContactModal, errorMessage } = this.state;
+  // renderEditContactModal = () => {
+  //   const { contact } = this.state;
 
-    if (!contact) {
-      return null;
-    }
+  //   if (!contact) {
+  //     return null;
+  //   }
 
-    return (
-      <Modal isOpen={editContactModal} toggle={this.toggleEditContact}>
-        <Form onSubmit={e => this.editContact(e, contact.id)}>
-          <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
-          <ModalBody>
-            <ContactModalFields contact={contact} errorMessage={errorMessage} />
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary">Save</Button>
-            <Button color="secondary" onClick={this.toggleEditContact}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Form>
-      </Modal>
-    );
+  //   return (
+  //     //   <Modal isOpen={editContactModal} toggle={this.toggleEditContact}>
+  //     //    <Form onSubmit={e => this.editContact(e)}>
+  //     //     <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
+  //     //     <ModalBody>
+  //     //       <ContactModalFields contact={contact} errorMessage={errorMessage} />
+  //     //     </ModalBody>
+  //     //     <ModalFooter>
+  //     //       <Button color="primary" type="submit">
+  //     //         Save
+  //     //       </Button>
+  //     //       <Button color="secondary" onClick={this.toggleEditContact}>
+  //     //         Cancel
+  //     //       </Button>
+  //     //     </ModalFooter>
+  //     //    </Form>
+  //     //   </Modal>
+  //   );
+  // };
+
+  renderEditModalBody = () => {
+    const { contact, errorMessage } = this.state;
+
+    return <ContactModalFields contact={contact} errorMessage={errorMessage} />;
   };
 
   renderDeleteContactModal = () => {
