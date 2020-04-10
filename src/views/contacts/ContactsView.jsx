@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { getContacts, addContact, editContact, deleteContact } from '../../services/contacts';
 import '../../style/Contacts.css';
@@ -9,15 +8,14 @@ import { Loader } from '../../components/Loader';
 import { DragDropList } from '../../components/DragDropList';
 import { ContactModalFields } from './ContactModalFields';
 import ContactElement from './ContactElement';
-import AddButton from '../../components/AddButton';
 import Title from '../../components/Title';
+import CustomModal from '../../components/CustomModal';
 
 export class ContactsView extends React.Component {
   state = {
     contactList: null,
     contact: null,
     errorMessage: null,
-    addContactModal: false,
   };
 
   componentDidMount() {
@@ -55,7 +53,6 @@ export class ContactsView extends React.Component {
       return;
     }
 
-    this.toggleAddContact();
     this.getContacts();
 
     toast.info('Contact has been added');
@@ -83,7 +80,6 @@ export class ContactsView extends React.Component {
       return;
     }
 
-    // this.toggleContact();
     this.getContacts();
 
     toast.info('Contact has been edited');
@@ -101,7 +97,6 @@ export class ContactsView extends React.Component {
       return;
     }
 
-    // this.toggleContact();
     this.getContacts();
 
     toast.info('Contact has been deleted');
@@ -121,15 +116,6 @@ export class ContactsView extends React.Component {
     });
   };
 
-  toggleAddContact = contact => {
-    this.setState(prevState => ({
-      addContactModal: !prevState.addContactModal,
-      contact,
-    }));
-
-    this.removeErrorMessage();
-  };
-
   toggleContact = contact => {
     this.setState({
       contact,
@@ -147,9 +133,14 @@ export class ContactsView extends React.Component {
 
     return (
       <>
-        <AddButton title="Add contact" onClick={this.toggleAddContact} />
-
-        {this.renderAddContactModal()}
+        <CustomModal
+          onModalSubmit={this.addContact}
+          modalBody={this.renderAddModalBody}
+          modalTitle="Edit contact"
+          buttonBody="Add contact"
+          buttonClassName="add-button"
+          buttonOutline
+        />
 
         <Title name="Contacts" />
 
@@ -172,87 +163,11 @@ export class ContactsView extends React.Component {
     />
   );
 
-  renderAddContactModal = () => {
-    const { contact, addContactModal, errorMessage } = this.state;
-
-    if (!contact) {
-      return null;
-    }
-
-    return (
-      <Modal isOpen={addContactModal} toggle={this.toggleAddContact}>
-        <Form onSubmit={e => this.addContact(e)}>
-          <ModalHeader toggle={this.toggleAddContact}>Add contact</ModalHeader>
-          <ModalBody>
-            <ContactModalFields errorMessage={errorMessage} />
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary">Save</Button>
-            <Button color="secondary" onClick={this.toggleAddContact}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Form>
-      </Modal>
-    );
-  };
-
-  // renderEditContactModal = () => {
-  //   const { contact } = this.state;
-
-  //   if (!contact) {
-  //     return null;
-  //   }
-
-  //   return (
-  //     //   <Modal isOpen={editContactModal} toggle={th}>
-  //     //    <Form onSubmit={e => this.editContact(e)}>
-  //     //     <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
-  //     //     <ModalBody>
-  //     //       <ContactModalFields contact={contact} errorMessage={errorMessage} />
-  //     //     </ModalBody>
-  //     //     <ModalFooter>
-  //     //       <Button color="primary" type="submit">
-  //     //         Save
-  //     //       </Button>
-  //     //       <Button color="secondary" onClick={this.toggleEditContact}>
-  //     //         Cancel
-  //     //       </Button>
-  //     //     </ModalFooter>
-  //     //    </Form>
-  //     //   </Modal>
-  //   );
-  // };
+  renderAddModalBody = () => <ContactModalFields errorMessage={this.state.errorMessage} />;
 
   renderEditModalBody = () => {
     const { contact, errorMessage } = this.state;
 
     return <ContactModalFields contact={contact} errorMessage={errorMessage} />;
   };
-
-  //   renderDeleteContactModal = () => {
-  //     const { contact, deleteContactModal, errorMessage } = this.state;
-
-  //     if (!contact) {
-  //       return null;
-  //     }
-
-  //     return (
-  //       <Modal isOpen={deleteContactModal} toggle={this.toggleDeleteContact}>
-  //         <ModalHeader toggle={this.toggleDeleteContact}>Delete contact</ModalHeader>
-  //         <ModalBody>
-  //           <p>Are you sure you want to delete this contact?</p>
-  //           {errorMessage && <div className="error-message">{errorMessage}</div>}
-  //         </ModalBody>
-  //         <ModalFooter>
-  //           <Button color="primary" onClick={e => this.deleteContact(e)}>
-  //             Confirm
-  //           </Button>
-  //           <Button color="secondary" onClick={this.toggleDeleteContact}>
-  //             Cancel
-  //           </Button>
-  //         </ModalFooter>
-  //       </Modal>
-  //     );
-  //   };
 }

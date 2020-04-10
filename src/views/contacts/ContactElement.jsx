@@ -30,7 +30,6 @@ const ContactElement = ({
           onModalSubmit={editContact}
           modalBody={renderEditModalBody}
           modalTitle="Edit contact"
-          successButtonTitle="Save"
           buttonClassName="edit-icon"
           buttonColor="link"
           buttonBody={editButtonBody}
@@ -42,6 +41,7 @@ const ContactElement = ({
           modalTitle="Delete contact"
           buttonColor="link"
           buttonBody={deleteButtonBody}
+          successButtonTitle="Confirm"
         />
       </div>
     </div>

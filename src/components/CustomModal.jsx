@@ -41,12 +41,18 @@ export default class CustomModal extends Component {
       buttonClassName,
       buttonColor,
       buttonBody,
+      buttonOutline,
     } = this.props;
     const { isOpen } = this.state;
 
     return (
       <>
-        <Button className={buttonClassName} color={buttonColor} onClick={this.openModal}>
+        <Button
+          className={buttonClassName}
+          color={buttonColor ? buttonColor : 'primary'}
+          outline={buttonOutline ? true : false}
+          onClick={this.openModal}
+        >
           {buttonBody}
         </Button>
         <Modal isOpen={isOpen} toggle={this.toggle}>
@@ -55,7 +61,7 @@ export default class CustomModal extends Component {
             <ModalBody>{modalBody()}</ModalBody>
             <ModalFooter>
               <Button color="primary" onClick={e => this.onSuccess(e)} type="submit">
-                {successButtonTitle ? successButtonTitle : 'Confirm'}
+                {successButtonTitle ? successButtonTitle : 'Save'}
               </Button>
               <Button color="secondary" onClick={this.toggle}>
                 Cancel
