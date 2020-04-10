@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form } from 'reactstrap';
+import { Button, Modal as RModal, ModalHeader, ModalBody, ModalFooter, Form } from 'reactstrap';
 
-export default class CustomModal extends Component {
+export default class Modal extends Component {
   state = {
     isOpen: false,
   };
@@ -25,11 +25,11 @@ export default class CustomModal extends Component {
   onSuccess = e => {
     const { onSuccess } = this.props;
 
-    this.toggle();
-
     if (onSuccess) {
       onSuccess(e);
     }
+
+    this.toggle();
   };
 
   render() {
@@ -55,7 +55,7 @@ export default class CustomModal extends Component {
         >
           {buttonBody}
         </Button>
-        <Modal isOpen={isOpen} toggle={this.toggle}>
+        <RModal isOpen={isOpen} toggle={this.toggle}>
           <Form onSubmit={e => onModalSubmit(e)}>
             <ModalHeader toggle={this.toggle}>{modalTitle}</ModalHeader>
             <ModalBody>{modalBody()}</ModalBody>
@@ -68,7 +68,7 @@ export default class CustomModal extends Component {
               </Button>
             </ModalFooter>
           </Form>
-        </Modal>
+        </RModal>
       </>
     );
   }

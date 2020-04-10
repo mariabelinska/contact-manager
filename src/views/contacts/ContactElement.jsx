@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CustomModal from '../../components/CustomModal';
+import Modal from '../../components/Modal';
 import { editButtonBody, deleteButtonBody } from '../../constants';
 
 const ContactElement = ({
@@ -25,7 +25,7 @@ const ContactElement = ({
         </div>
       </div>
       <div className="icons">
-        <CustomModal
+        <Modal
           onModalOpen={() => toggleContact(contact)}
           onModalSubmit={editContact}
           modalBody={renderEditModalBody}
@@ -34,7 +34,7 @@ const ContactElement = ({
           buttonColor="link"
           buttonBody={editButtonBody}
         />
-        <CustomModal
+        <Modal
           onModalOpen={() => toggleContact(contact)}
           onSuccess={deleteContact}
           modalBody={() => renderDeleteModalBody(errorMessage)}

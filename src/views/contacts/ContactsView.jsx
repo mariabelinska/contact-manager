@@ -9,7 +9,7 @@ import { DragDropList } from '../../components/DragDropList';
 import { ContactModalFields } from './ContactModalFields';
 import ContactElement from './ContactElement';
 import Title from '../../components/Title';
-import CustomModal from '../../components/CustomModal';
+import Modal from '../../components/Modal';
 
 export class ContactsView extends React.Component {
   state = {
@@ -61,8 +61,6 @@ export class ContactsView extends React.Component {
   editContact = async e => {
     const { id } = this.state.contact;
 
-    console.log('contact id', id);
-    console.log('e', e);
     e.preventDefault();
 
     const { firstName, lastName, email, phone, sequence } = e.target;
@@ -133,7 +131,7 @@ export class ContactsView extends React.Component {
 
     return (
       <>
-        <CustomModal
+        <Modal
           onModalSubmit={this.addContact}
           modalBody={this.renderAddModalBody}
           modalTitle="Edit contact"
