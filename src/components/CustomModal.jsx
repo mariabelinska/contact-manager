@@ -7,12 +7,29 @@ export default class CustomModal extends Component {
   };
 
   toggle = () => {
-    const { customToggle } = this.props;
     this.setState(prevState => ({
       isOpen: !prevState.isOpen,
     }));
+  };
 
-    customToggle();
+  openModal = () => {
+    const { onModalOpen } = this.props;
+
+    this.toggle();
+
+    if (onModalOpen) {
+      onModalOpen();
+    }
+  };
+
+  onSuccess = e => {
+    const { onSuccess } = this.props;
+
+    this.toggle();
+
+    if (onSuccess) {
+      onSuccess(e);
+    }
   };
 
   render() {
@@ -29,7 +46,7 @@ export default class CustomModal extends Component {
 
     return (
       <>
-        <Button className={buttonClassName} color={buttonColor} onClick={() => this.toggle()}>
+        <Button className={buttonClassName} color={buttonColor} onClick={this.openModal}>
           {buttonBody}
         </Button>
         <Modal isOpen={isOpen} toggle={this.toggle}>
@@ -37,7 +54,7 @@ export default class CustomModal extends Component {
             <ModalHeader toggle={this.toggle}>{modalTitle}</ModalHeader>
             <ModalBody>{modalBody()}</ModalBody>
             <ModalFooter>
-              <Button color="primary" onClick={this.toggle} type="submit">
+              <Button color="primary" onClick={e => this.onSuccess(e)} type="submit">
                 {successButtonTitle ? successButtonTitle : 'Confirm'}
               </Button>
               <Button color="secondary" onClick={this.toggle}>

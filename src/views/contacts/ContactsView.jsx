@@ -18,8 +18,6 @@ export class ContactsView extends React.Component {
     contact: null,
     errorMessage: null,
     addContactModal: false,
-    editContactModal: false,
-    deleteContactModal: false,
   };
 
   componentDidMount() {
@@ -85,13 +83,15 @@ export class ContactsView extends React.Component {
       return;
     }
 
-    this.toggleEditContact();
+    // this.toggleContact();
     this.getContacts();
 
     toast.info('Contact has been edited');
   };
 
-  deleteContact = async (e, id) => {
+  deleteContact = async e => {
+    const { id } = this.state.contact;
+
     e.preventDefault();
 
     const apiResponse = await deleteContact(id);
@@ -101,7 +101,7 @@ export class ContactsView extends React.Component {
       return;
     }
 
-    this.toggleDeleteContact();
+    // this.toggleContact();
     this.getContacts();
 
     toast.info('Contact has been deleted');
@@ -130,19 +130,12 @@ export class ContactsView extends React.Component {
     this.removeErrorMessage();
   };
 
-  toggleEditContact = contact => {
+  toggleContact = contact => {
     this.setState({
       contact,
     });
 
     this.removeErrorMessage();
-  };
-
-  toggleDeleteContact = contact => {
-    this.setState(prevState => ({
-      deleteContactModal: !prevState.deleteContactModal,
-      contact,
-    }));
   };
 
   render() {
@@ -157,7 +150,6 @@ export class ContactsView extends React.Component {
         <AddButton title="Add contact" onClick={this.toggleAddContact} />
 
         {this.renderAddContactModal()}
-        {/* {this.renderDeleteContactModal()} */}
 
         <Title name="Contacts" />
 
@@ -173,9 +165,9 @@ export class ContactsView extends React.Component {
   renderContactElement = contact => (
     <ContactElement
       contact={contact}
-      toggleEditContact={this.toggleEditContact}
-      toggleDeleteContact={this.toggleDeleteContact}
+      toggleContact={this.toggleContact}
       editContact={this.editContact}
+      deleteContact={this.deleteContact}
       renderEditModalBody={this.renderEditModalBody}
     />
   );
@@ -213,7 +205,7 @@ export class ContactsView extends React.Component {
   //   }
 
   //   return (
-  //     //   <Modal isOpen={editContactModal} toggle={this.toggleEditContact}>
+  //     //   <Modal isOpen={editContactModal} toggle={th}>
   //     //    <Form onSubmit={e => this.editContact(e)}>
   //     //     <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
   //     //     <ModalBody>
@@ -238,29 +230,29 @@ export class ContactsView extends React.Component {
     return <ContactModalFields contact={contact} errorMessage={errorMessage} />;
   };
 
-  renderDeleteContactModal = () => {
-    const { contact, deleteContactModal, errorMessage } = this.state;
+  //   renderDeleteContactModal = () => {
+  //     const { contact, deleteContactModal, errorMessage } = this.state;
 
-    if (!contact) {
-      return null;
-    }
+  //     if (!contact) {
+  //       return null;
+  //     }
 
-    return (
-      <Modal isOpen={deleteContactModal} toggle={this.toggleDeleteContact}>
-        <ModalHeader toggle={this.toggleDeleteContact}>Delete contact</ModalHeader>
-        <ModalBody>
-          <p>Are you sure you want to delete this contact?</p>
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={e => this.deleteContact(e, contact.id)}>
-            Confirm
-          </Button>
-          <Button color="secondary" onClick={this.toggleDeleteContact}>
-            Cancel
-          </Button>
-        </ModalFooter>
-      </Modal>
-    );
-  };
+  //     return (
+  //       <Modal isOpen={deleteContactModal} toggle={this.toggleDeleteContact}>
+  //         <ModalHeader toggle={this.toggleDeleteContact}>Delete contact</ModalHeader>
+  //         <ModalBody>
+  //           <p>Are you sure you want to delete this contact?</p>
+  //           {errorMessage && <div className="error-message">{errorMessage}</div>}
+  //         </ModalBody>
+  //         <ModalFooter>
+  //           <Button color="primary" onClick={e => this.deleteContact(e)}>
+  //             Confirm
+  //           </Button>
+  //           <Button color="secondary" onClick={this.toggleDeleteContact}>
+  //             Cancel
+  //           </Button>
+  //         </ModalFooter>
+  //       </Modal>
+  //     );
+  //   };
 }

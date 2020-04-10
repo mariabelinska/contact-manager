@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CustomModal from '../../components/CustomModal';
+import { editButtonBody, deleteButtonBody } from '../../constants';
 
 const ContactElement = ({
   contact,
-  toggleEditContact,
-  toggleDeleteContact,
+  toggleContact,
   editContact,
+  deleteContact,
   renderEditModalBody,
+  errorMessage,
 }) => (
   <>
     <b>{contact.fullName}</b>
@@ -24,7 +26,7 @@ const ContactElement = ({
       </div>
       <div className="icons">
         <CustomModal
-          customToggle={() => toggleEditContact(contact)}
+          onModalOpen={() => toggleContact(contact)}
           onModalSubmit={editContact}
           modalBody={renderEditModalBody}
           modalTitle="Edit contact"
@@ -34,28 +36,30 @@ const ContactElement = ({
           buttonBody={editButtonBody}
         />
         <CustomModal
-          customToggle={() => toggleDeleteContact(contact)}
-          modalBody={renderEditModalBody}
+          onModalOpen={() => toggleContact(contact)}
+          onSuccess={deleteContact}
+          modalBody={() => renderDeleteModalBody(errorMessage)}
           modalTitle="Delete contact"
           buttonColor="link"
           buttonBody={deleteButtonBody}
         />
-        {/* <Button color="link" onClick={() => toggleDeleteContact(contact)}>
-          <i className="fas fa-trash-alt"></i>
-        </Button> */}
       </div>
     </div>
   </>
 );
 
-const editButtonBody = <i className="fas fa-pen"></i>;
-
-const deleteButtonBody = <i className="fas fa-trash-alt"></i>;
+const renderDeleteModalBody = errorMessage => {
+  return (
+    <>
+      <p>Are you sure you want to delete this contact?</p>
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+    </>
+  );
+};
 
 ContactElement.propTypes = {
   contact: PropTypes.object.isRequired,
-  toggleEditContact: PropTypes.func.isRequired,
-  toggleDeleteContact: PropTypes.func.isRequired,
+  toggleContact: PropTypes.func.isRequired,
 };
 
 export default ContactElement;
