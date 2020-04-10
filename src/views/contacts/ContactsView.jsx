@@ -159,15 +159,10 @@ export class ContactsView extends React.Component {
       editContact={this.editContact}
       deleteContact={this.deleteContact}
       renderEditModalBody={this.renderEditModalBody}
+      openedContact={this.state.contact}
       errorMessage={this.state.errorMessage}
     />
   );
 
   renderAddModalBody = () => <ContactModalFields errorMessage={this.state.errorMessage} />;
-
-  renderEditModalBody = () => {
-    const { contact, errorMessage } = this.state;
-
-    return <ContactModalFields contact={contact} errorMessage={errorMessage} />;
-  };
 }

@@ -21,6 +21,10 @@ export default class Modal extends Component {
   submitModal = async e => {
     const { onModalSubmit } = this.props;
 
+    if (!onModalSubmit) {
+      return;
+    }
+
     const hasError = await onModalSubmit(e);
 
     if (!hasError) {
@@ -31,12 +35,14 @@ export default class Modal extends Component {
   onSuccess = async e => {
     const { onSuccess } = this.props;
 
-    if (onSuccess) {
-      const hasError = await onSuccess(e);
+    if (!onSuccess) {
+      return;
+    }
 
-      if (!hasError) {
-        this.toggle();
-      }
+    const hasError = await onSuccess(e);
+
+    if (!hasError) {
+      this.toggle();
     }
   };
 
@@ -57,7 +63,7 @@ export default class Modal extends Component {
         <Button
           className={buttonClassName}
           color={buttonColor ? buttonColor : 'primary'}
-          outline={buttonOutline ? true : false}
+          outline={buttonOutline}
           onClick={this.toggle}
         >
           {buttonBody}

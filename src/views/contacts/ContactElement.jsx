@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
 import { editButtonBody, deleteButtonBody } from '../../constants';
+import { ContactModalFields } from './ContactModalFields';
 
 const ContactElement = ({
   contact,
   toggleContact,
   editContact,
   deleteContact,
-  renderEditModalBody,
+  openedContact,
   errorMessage,
 }) => (
   <>
@@ -28,7 +29,7 @@ const ContactElement = ({
         <Modal
           customToggle={() => toggleContact(contact)}
           onModalSubmit={editContact}
-          modalBody={renderEditModalBody}
+          modalBody={() => renderEditModalBody(openedContact, errorMessage)}
           modalTitle="Edit contact"
           buttonClassName="edit-icon"
           buttonColor="link"
@@ -49,14 +50,16 @@ const ContactElement = ({
   </>
 );
 
-const renderDeleteModalBody = errorMessage => {
-  return (
-    <>
-      <p>Are you sure you want to delete this contact?</p>
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-    </>
-  );
-};
+const renderEditModalBody = (openedContact, errorMessage) => (
+  <ContactModalFields contact={openedContact} errorMessage={errorMessage} />
+);
+
+const renderDeleteModalBody = errorMessage => (
+  <>
+    <p>Are you sure you want to delete this contact?</p>
+    {errorMessage && <div className="error-message">{errorMessage}</div>}
+  </>
+);
 
 ContactElement.propTypes = {
   contact: PropTypes.object.isRequired,
