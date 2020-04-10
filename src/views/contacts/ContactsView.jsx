@@ -14,7 +14,7 @@ import Modal from '../../components/Modal';
 export class ContactsView extends React.Component {
   state = {
     contactList: null,
-    contact: null,
+    openedContact: null,
     errorMessage: null,
   };
 
@@ -59,7 +59,7 @@ export class ContactsView extends React.Component {
   };
 
   editContact = async e => {
-    const { id } = this.state.contact;
+    const { id } = this.state.openedContact;
 
     e.preventDefault();
 
@@ -84,7 +84,7 @@ export class ContactsView extends React.Component {
   };
 
   deleteContact = async e => {
-    const { id } = this.state.contact;
+    const { id } = this.state.openedContact;
 
     e.preventDefault();
 
@@ -114,9 +114,9 @@ export class ContactsView extends React.Component {
     });
   };
 
-  toggleContact = contact => {
+  toggleContact = openedContact => {
     this.setState({
-      contact,
+      openedContact,
     });
 
     this.removeErrorMessage();
@@ -158,8 +158,7 @@ export class ContactsView extends React.Component {
       toggleContact={this.toggleContact}
       editContact={this.editContact}
       deleteContact={this.deleteContact}
-      renderEditModalBody={this.renderEditModalBody}
-      openedContact={this.state.contact}
+      openedContact={this.state.openedContact}
       errorMessage={this.state.errorMessage}
     />
   );
