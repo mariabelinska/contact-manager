@@ -64,6 +64,10 @@ const renderDeleteModalBody = errorMessage => (
 ContactElement.propTypes = {
   contact: PropTypes.object.isRequired,
   toggleContact: PropTypes.func.isRequired,
+  editContact: PropTypes.func.isRequired,
+  deleteContact: PropTypes.func.isRequired,
+  openedContact: PropTypes.object,
+  errorMessage: PropTypes.array,
 };
 
 export default ContactElement;

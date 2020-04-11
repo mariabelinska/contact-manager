@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Modal as RModal, ModalHeader, ModalBody, ModalFooter, Form } from 'reactstrap';
+import PropTypes from 'prop-types';
 
 export default class Modal extends Component {
   state = {
@@ -86,3 +87,16 @@ export default class Modal extends Component {
     );
   }
 }
+
+Modal.propTypes = {
+  modalTitle: PropTypes.string.isRequired,
+  modalBody: PropTypes.func.isRequired,
+  buttonBody: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
+  customToggle: PropTypes.func,
+  onModalSubmit: PropTypes.func,
+  onSuccess: PropTypes.func,
+  successButtonTitle: PropTypes.string,
+  buttonClassName: PropTypes.string,
+  buttonColor: PropTypes.string,
+  buttonOutline: PropTypes.bool,
+};
