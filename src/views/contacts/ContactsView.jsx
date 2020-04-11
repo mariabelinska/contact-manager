@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { getContacts, addContact, editContact, deleteContact } from '../../services/contacts';
 import '../../style/Contacts.css';
@@ -9,17 +8,14 @@ import { Loader } from '../../components/Loader';
 import { DragDropList } from '../../components/DragDropList';
 import { ContactModalFields } from './ContactModalFields';
 import ContactElement from './ContactElement';
-import AddButton from '../../components/AddButton';
 import Title from '../../components/Title';
+import Modal from '../../components/Modal';
 
 export class ContactsView extends React.Component {
   state = {
     contactList: null,
-    contact: null,
+    openedContact: null,
     errorMessage: null,
-    addContactModal: false,
-    editContactModal: false,
-    deleteContactModal: false,
   };
 
   componentDidMount() {
@@ -54,16 +50,17 @@ export class ContactsView extends React.Component {
 
     if (apiResponse.errors) {
       this.setErrorMessage(apiResponse.errors);
-      return;
+      return apiResponse.errors;
     }
 
-    this.toggleAddContact();
     this.getContacts();
 
     toast.info('Contact has been added');
   };
 
-  editContact = async (e, id) => {
+  editContact = async e => {
+    const { id } = this.state.openedContact;
+
     e.preventDefault();
 
     const { firstName, lastName, email, phone, sequence } = e.target;
@@ -78,26 +75,26 @@ export class ContactsView extends React.Component {
 
     if (apiResponse.errors) {
       this.setErrorMessage(apiResponse.errors);
-      return;
+      return apiResponse.errors;
     }
 
-    this.toggleEditContact();
     this.getContacts();
 
     toast.info('Contact has been edited');
   };
 
-  deleteContact = async (e, id) => {
+  deleteContact = async e => {
+    const { id } = this.state.openedContact;
+
     e.preventDefault();
 
     const apiResponse = await deleteContact(id);
 
     if (apiResponse && apiResponse.errors) {
-      this.setErrorMessage(Object.values(apiResponse.errors));
-      return;
+      this.setErrorMessage(apiResponse.errors);
+      return apiResponse.errors;
     }
 
-    this.toggleDeleteContact();
     this.getContacts();
 
     toast.info('Contact has been deleted');
@@ -117,29 +114,12 @@ export class ContactsView extends React.Component {
     });
   };
 
-  toggleAddContact = contact => {
-    this.setState(prevState => ({
-      addContactModal: !prevState.addContactModal,
-      contact,
-    }));
+  toggleContact = openedContact => {
+    this.setState({
+      openedContact,
+    });
 
     this.removeErrorMessage();
-  };
-
-  toggleEditContact = contact => {
-    this.setState(prevState => ({
-      editContactModal: !prevState.editContactModal,
-      contact,
-    }));
-
-    this.removeErrorMessage();
-  };
-
-  toggleDeleteContact = contact => {
-    this.setState(prevState => ({
-      deleteContactModal: !prevState.deleteContactModal,
-      contact,
-    }));
   };
 
   render() {
@@ -151,11 +131,15 @@ export class ContactsView extends React.Component {
 
     return (
       <>
-        <AddButton title="Add contact" onClick={this.toggleAddContact} />
-
-        {this.renderAddContactModal()}
-        {this.renderEditContactModal()}
-        {this.renderDeleteContactModal()}
+        <Modal
+          customToggle={this.toggleContact}
+          onModalSubmit={this.addContact}
+          modalBody={this.renderAddModalBody}
+          modalTitle="Edit contact"
+          buttonBody="Add contact"
+          buttonClassName="add-button"
+          buttonOutline
+        />
 
         <Title name="Contacts" />
 
@@ -171,84 +155,13 @@ export class ContactsView extends React.Component {
   renderContactElement = contact => (
     <ContactElement
       contact={contact}
-      toggleEditContact={this.toggleEditContact}
-      toggleDeleteContact={this.toggleDeleteContact}
+      toggleContact={this.toggleContact}
+      editContact={this.editContact}
+      deleteContact={this.deleteContact}
+      openedContact={this.state.openedContact}
+      errorMessage={this.state.errorMessage}
     />
   );
 
-  renderAddContactModal = () => {
-    const { contact, addContactModal, errorMessage } = this.state;
-
-    if (!contact) {
-      return null;
-    }
-
-    return (
-      <Modal isOpen={addContactModal} toggle={this.toggleAddContact}>
-        <Form onSubmit={e => this.addContact(e)}>
-          <ModalHeader toggle={this.toggleAddContact}>Add contact</ModalHeader>
-          <ModalBody>
-            <ContactModalFields errorMessage={errorMessage} />
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary">Save</Button>
-            <Button color="secondary" onClick={this.toggleAddContact}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Form>
-      </Modal>
-    );
-  };
-
-  renderEditContactModal = () => {
-    const { contact, editContactModal, errorMessage } = this.state;
-
-    if (!contact) {
-      return null;
-    }
-
-    return (
-      <Modal isOpen={editContactModal} toggle={this.toggleEditContact}>
-        <Form onSubmit={e => this.editContact(e, contact.id)}>
-          <ModalHeader toggle={this.togglEditContact}>Edit contact</ModalHeader>
-          <ModalBody>
-            <ContactModalFields contact={contact} errorMessage={errorMessage} />
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary">Save</Button>
-            <Button color="secondary" onClick={this.toggleEditContact}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Form>
-      </Modal>
-    );
-  };
-
-  renderDeleteContactModal = () => {
-    const { contact, deleteContactModal, errorMessage } = this.state;
-
-    if (!contact) {
-      return null;
-    }
-
-    return (
-      <Modal isOpen={deleteContactModal} toggle={this.toggleDeleteContact}>
-        <ModalHeader toggle={this.toggleDeleteContact}>Delete contact</ModalHeader>
-        <ModalBody>
-          <p>Are you sure you want to delete this contact?</p>
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={e => this.deleteContact(e, contact.id)}>
-            Confirm
-          </Button>
-          <Button color="secondary" onClick={this.toggleDeleteContact}>
-            Cancel
-          </Button>
-        </ModalFooter>
-      </Modal>
-    );
-  };
+  renderAddModalBody = () => <ContactModalFields errorMessage={this.state.errorMessage} />;
 }

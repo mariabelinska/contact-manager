@@ -1,8 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'reactstrap';
+import Modal from '../../components/Modal';
+import { editButtonBody, deleteButtonBody } from '../../constants';
+import { ContactModalFields } from './ContactModalFields';
 
-const ContactElement = ({ contact, toggleEditContact, toggleDeleteContact }) => (
+const ContactElement = ({
+  contact,
+  toggleContact,
+  editContact,
+  deleteContact,
+  openedContact,
+  errorMessage,
+}) => (
   <>
     <b>{contact.fullName}</b>
     <div className="contact-information">
@@ -17,21 +26,48 @@ const ContactElement = ({ contact, toggleEditContact, toggleDeleteContact }) => 
         </div>
       </div>
       <div className="icons">
-        <Button className="edit-icon" color="link" onClick={() => toggleEditContact(contact)}>
-          <i className="fas fa-pen"></i>
-        </Button>
-        <Button color="link" onClick={() => toggleDeleteContact(contact)}>
-          <i className="fas fa-trash-alt"></i>
-        </Button>
+        <Modal
+          customToggle={() => toggleContact(contact)}
+          onModalSubmit={editContact}
+          modalBody={() => renderEditModalBody(openedContact, errorMessage)}
+          modalTitle="Edit contact"
+          buttonClassName="edit-icon"
+          buttonColor="link"
+          buttonBody={editButtonBody}
+          errorMessage={errorMessage}
+        />
+        <Modal
+          customToggle={() => toggleContact(contact)}
+          onSuccess={deleteContact}
+          modalBody={() => renderDeleteModalBody(errorMessage)}
+          modalTitle="Delete contact"
+          buttonColor="link"
+          buttonBody={deleteButtonBody}
+          successButtonTitle="Confirm"
+        />
       </div>
     </div>
   </>
 );
 
+const renderEditModalBody = (openedContact, errorMessage) => (
+  <ContactModalFields contact={openedContact} errorMessage={errorMessage} />
+);
+
+const renderDeleteModalBody = errorMessage => (
+  <>
+    <p>Are you sure you want to delete this contact?</p>
+    {errorMessage && <div className="error-message">{errorMessage}</div>}
+  </>
+);
+
 ContactElement.propTypes = {
   contact: PropTypes.object.isRequired,
-  toggleEditContact: PropTypes.func.isRequired,
-  toggleDeleteContact: PropTypes.func.isRequired,
+  toggleContact: PropTypes.func.isRequired,
+  editContact: PropTypes.func.isRequired,
+  deleteContact: PropTypes.func.isRequired,
+  openedContact: PropTypes.object,
+  errorMessage: PropTypes.array,
 };
 
 export default ContactElement;
