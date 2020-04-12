@@ -1,27 +1,30 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Button, Modal as RModal, ModalHeader, ModalBody, ModalFooter, Form } from 'reactstrap';
 import PropTypes from 'prop-types';
 
-export default class Modal extends Component {
-  state = {
-    isOpen: false,
-  };
+const Modal = ({
+  modalBody,
+  modalTitle,
+  successButtonTitle,
+  buttonClassName,
+  buttonColor,
+  buttonBody,
+  buttonOutline,
+  onModalSubmit,
+  customToggle,
+  onSuccess,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  toggle = () => {
-    const { customToggle } = this.props;
-
-    this.setState(prevState => ({
-      isOpen: !prevState.isOpen,
-    }));
+  const toggle = () => {
+    setIsOpen(!isOpen);
 
     if (customToggle) {
       customToggle();
     }
   };
 
-  submitModal = async e => {
-    const { onModalSubmit } = this.props;
-
+  const submitModal = async e => {
     if (!onModalSubmit) {
       return;
     }
@@ -29,13 +32,11 @@ export default class Modal extends Component {
     const hasError = await onModalSubmit(e);
 
     if (!hasError) {
-      this.toggle();
+      toggle();
     }
   };
 
-  onSuccess = async e => {
-    const { onSuccess } = this.props;
-
+  const onSuccessClick = async e => {
     if (!onSuccess) {
       return;
     }
@@ -43,50 +44,39 @@ export default class Modal extends Component {
     const hasError = await onSuccess(e);
 
     if (!hasError) {
-      this.toggle();
+      toggle();
     }
   };
 
-  render() {
-    const {
-      modalBody,
-      modalTitle,
-      successButtonTitle,
-      buttonClassName,
-      buttonColor,
-      buttonBody,
-      buttonOutline,
-    } = this.props;
-    const { isOpen } = this.state;
+  return (
+    <>
+      <Button
+        className={buttonClassName}
+        color={buttonColor ? buttonColor : 'primary'}
+        outline={buttonOutline}
+        onClick={toggle}
+      >
+        {buttonBody}
+      </Button>
+      <RModal isOpen={isOpen} toggle={toggle}>
+        <Form onSubmit={e => submitModal(e)}>
+          <ModalHeader toggle={toggle}>{modalTitle}</ModalHeader>
+          <ModalBody>{modalBody()}</ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={e => onSuccessClick(e)} type="submit">
+              {successButtonTitle ? successButtonTitle : 'Save'}
+            </Button>
+            <Button color="secondary" onClick={toggle}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Form>
+      </RModal>
+    </>
+  );
+};
 
-    return (
-      <>
-        <Button
-          className={buttonClassName}
-          color={buttonColor ? buttonColor : 'primary'}
-          outline={buttonOutline}
-          onClick={this.toggle}
-        >
-          {buttonBody}
-        </Button>
-        <RModal isOpen={isOpen} toggle={this.toggle}>
-          <Form onSubmit={e => this.submitModal(e)}>
-            <ModalHeader toggle={this.toggle}>{modalTitle}</ModalHeader>
-            <ModalBody>{modalBody()}</ModalBody>
-            <ModalFooter>
-              <Button color="primary" onClick={e => this.onSuccess(e)} type="submit">
-                {successButtonTitle ? successButtonTitle : 'Save'}
-              </Button>
-              <Button color="secondary" onClick={this.toggle}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Form>
-        </RModal>
-      </>
-    );
-  }
-}
+export default Modal;
 
 Modal.propTypes = {
   modalTitle: PropTypes.string.isRequired,

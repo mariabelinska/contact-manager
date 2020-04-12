@@ -67,7 +67,7 @@ ContactElement.propTypes = {
   editContact: PropTypes.func.isRequired,
   deleteContact: PropTypes.func.isRequired,
   openedContact: PropTypes.object,
-  errorMessage: PropTypes.array,
+  errorMessage: PropTypes.string,
 };
 
 export default ContactElement;
